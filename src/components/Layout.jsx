@@ -56,11 +56,6 @@ export default function Layout() {
                   Fibre
                 </NavLink>
               </li>
-              <li className="nav-item" id='login'>
-                <NavLink className={navLinkClassName} to="/login">
-                  Log in
-                </NavLink>
-              </li>
             </ul>
           </div>
         </div>

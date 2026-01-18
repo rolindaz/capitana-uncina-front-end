@@ -1,11 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom'
 import Layout from './components/Layout'
 import HomePage from './pages/HomePage'
-import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProjectDetailPage from './pages/ProjectDetailPage'
 import ResourceDetailPage from './pages/ResourceDetailPage'
 import ResourceListPage from './pages/ResourceListPage'
+import YarnDetailPage from './pages/YarnDetailPage'
 
 const resources = {
   projects: { title: 'Progetti', apiPath: '/api/projects', uiPath: '/projects' },
@@ -21,8 +21,6 @@ export const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
     children: [
       { index: true, element: <HomePage /> },
-
-      { path: 'login', element: <LoginPage /> },
 
       {
         path: 'projects',
@@ -60,7 +58,7 @@ export const router = createBrowserRouter([
       {
         path: 'yarns/:id',
         element: (
-          <ResourceDetailPage
+          <YarnDetailPage
             title={resources.yarns.title}
             resourcePath={resources.yarns.apiPath}
             baseRoute={resources.yarns.uiPath}

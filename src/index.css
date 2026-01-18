@@ -117,21 +117,6 @@ body {
   color: white;
 }
 
-/* Login button: reverse styling compared to other nav links */
-#login .nav-link {
-  color: #F37046;
-}
-
-#login .nav-link:hover,
-#login .nav-link.active {
-  color: #ffffff;
-}
-
-#login .nav-link:focus-visible {
-  outline: 3px solid rgba(255, 255, 255, 0.7);
-  outline-offset: 2px;
-}
-
 .site-navbar .nav-link:hover,
 .site-navbar .nav-link.active {
   color: #F37046;
