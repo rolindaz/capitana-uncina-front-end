@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
+import ProjectDetailPage from './pages/ProjectDetailPage'
 import ResourceDetailPage from './pages/ResourceDetailPage'
 import ResourceListPage from './pages/ResourceListPage'
 
@@ -30,13 +31,14 @@ export const router = createBrowserRouter([
             title={resources.projects.title}
             resourcePath={resources.projects.apiPath}
             baseRoute={resources.projects.uiPath}
+            variant="projects"
           />
         ),
       },
       {
         path: 'projects/:id',
         element: (
-          <ResourceDetailPage
+          <ProjectDetailPage
             title={resources.projects.title}
             resourcePath={resources.projects.apiPath}
             baseRoute={resources.projects.uiPath}
@@ -51,6 +53,7 @@ export const router = createBrowserRouter([
             title={resources.yarns.title}
             resourcePath={resources.yarns.apiPath}
             baseRoute={resources.yarns.uiPath}
+            variant="yarns"
           />
         ),
       },

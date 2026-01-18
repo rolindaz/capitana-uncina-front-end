@@ -69,13 +69,12 @@ export default function ResourceDetailPage({ title, resourcePath, baseRoute }) {
   return (
     <div className="container py-4">
       <div className="mb-3">
-        <Link className="btn btn-link px-0" to={baseRoute}>
-          ← Back to {title}
+        <Link className="btn btn-outline-secondary font-quicksand" to={baseRoute}>
+          ← Indietro
         </Link>
       </div>
 
-      <h2 className="mb-1">{heading}</h2>
-      <div className="text-muted small mb-3">Endpoint: {resourcePath}/{id}</div>
+      <h2 className="mb-1 text-center">{heading}</h2>
 
       {isLoading ? <Loading label="Loading details…" /> : null}
       {error ? <ErrorState title="Could not load item" error={error} /> : null}
@@ -87,6 +86,12 @@ export default function ResourceDetailPage({ title, resourcePath, baseRoute }) {
           </div>
         </div>
       ) : null}
+
+      <div className="mt-4 d-flex justify-content-start">
+        <Link className="btn btn-outline-secondary font-quicksand" to={baseRoute}>
+          ← Indietro
+        </Link>
+      </div>
     </div>
   )
 }
