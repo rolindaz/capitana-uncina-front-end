@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import Layout from './components/Layout'
 import HomePage from './pages/HomePage'
+import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ResourceDetailPage from './pages/ResourceDetailPage'
 import ResourceListPage from './pages/ResourceListPage'
@@ -19,6 +20,8 @@ export const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
     children: [
       { index: true, element: <HomePage /> },
+
+      { path: 'login', element: <LoginPage /> },
 
       {
         path: 'projects',
