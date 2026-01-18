@@ -71,7 +71,7 @@ body {
 }
 
 .yarn-ball {
-  background-image: url('../public/yarnlady.png');
+  background-image: url('/yarnlady.png');
   background-size: contain;
   background-position: right;
   background-repeat: no-repeat;

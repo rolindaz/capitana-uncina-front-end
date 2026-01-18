@@ -20,9 +20,13 @@ function ObjectTable({ data }) {
                 {key}
               </th>
               <td>
-                {typeof value === 'object' && value !== null
-                  ? JSON.stringify(value)
-                  : String(value)}
+                {typeof value === 'object' && value !== null ? (
+                  <pre className="mb-0 small" style={{ whiteSpace: 'pre-wrap' }}>
+                    {JSON.stringify(value, null, 2)}
+                  </pre>
+                ) : (
+                  String(value)
+                )}
               </td>
             </tr>
           ))}

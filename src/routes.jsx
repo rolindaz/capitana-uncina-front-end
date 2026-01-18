@@ -7,10 +7,10 @@ import ResourceDetailPage from './pages/ResourceDetailPage'
 import ResourceListPage from './pages/ResourceListPage'
 
 const resources = {
-  projects: { title: 'Projects', path: '/api/projects' },
-  yarns: { title: 'Yarns', path: '/api/yarns' },
-  crafts: { title: 'Crafts', path: '/api/crafts' },
-  categories: { title: 'Categories', path: '/api/categories' },
+  projects: { title: 'Progetti', apiPath: '/api/projects', uiPath: '/projects' },
+  yarns: { title: 'Filati', apiPath: '/api/yarns', uiPath: '/yarns' },
+  crafts: { title: 'Tecniche', apiPath: '/api/crafts', uiPath: '/crafts' },
+  categories: { title: 'Fibre', apiPath: '/api/categories', uiPath: '/categories' },
 }
 
 export const router = createBrowserRouter([
@@ -28,8 +28,8 @@ export const router = createBrowserRouter([
         element: (
           <ResourceListPage
             title={resources.projects.title}
-            resourcePath={resources.projects.path}
-            baseRoute={resources.projects.path}
+            resourcePath={resources.projects.apiPath}
+            baseRoute={resources.projects.uiPath}
           />
         ),
       },
@@ -38,8 +38,8 @@ export const router = createBrowserRouter([
         element: (
           <ResourceDetailPage
             title={resources.projects.title}
-            resourcePath={resources.projects.path}
-            baseRoute={resources.projects.path}
+            resourcePath={resources.projects.apiPath}
+            baseRoute={resources.projects.uiPath}
           />
         ),
       },
@@ -49,8 +49,8 @@ export const router = createBrowserRouter([
         element: (
           <ResourceListPage
             title={resources.yarns.title}
-            resourcePath={resources.yarns.path}
-            baseRoute={resources.yarns.path}
+            resourcePath={resources.yarns.apiPath}
+            baseRoute={resources.yarns.uiPath}
           />
         ),
       },
@@ -59,8 +59,8 @@ export const router = createBrowserRouter([
         element: (
           <ResourceDetailPage
             title={resources.yarns.title}
-            resourcePath={resources.yarns.path}
-            baseRoute={resources.yarns.path}
+            resourcePath={resources.yarns.apiPath}
+            baseRoute={resources.yarns.uiPath}
           />
         ),
       },
@@ -70,8 +70,8 @@ export const router = createBrowserRouter([
         element: (
           <ResourceListPage
             title={resources.crafts.title}
-            resourcePath={resources.crafts.path}
-            baseRoute={resources.crafts.path}
+            resourcePath={resources.crafts.apiPath}
+            baseRoute={resources.crafts.uiPath}
           />
         ),
       },
@@ -80,8 +80,8 @@ export const router = createBrowserRouter([
         element: (
           <ResourceDetailPage
             title={resources.crafts.title}
-            resourcePath={resources.crafts.path}
-            baseRoute={resources.crafts.path}
+            resourcePath={resources.crafts.apiPath}
+            baseRoute={resources.crafts.uiPath}
           />
         ),
       },
@@ -91,8 +91,8 @@ export const router = createBrowserRouter([
         element: (
           <ResourceListPage
             title={resources.categories.title}
-            resourcePath={resources.categories.path}
-            baseRoute={resources.categories.path}
+            resourcePath={resources.categories.apiPath}
+            baseRoute={resources.categories.uiPath}
           />
         ),
       },
@@ -101,8 +101,8 @@ export const router = createBrowserRouter([
         element: (
           <ResourceDetailPage
             title={resources.categories.title}
-            resourcePath={resources.categories.path}
-            baseRoute={resources.categories.path}
+            resourcePath={resources.categories.apiPath}
+            baseRoute={resources.categories.uiPath}
           />
         ),
       },

@@ -61,6 +61,11 @@ export default function ResourceListPage({ title, resourcePath, baseRoute }) {
           {sortedItems.map((item, index) => {
             const id = getItemId(item)
             const label = getItemLabel(item)
+            const secondary =
+              (item && typeof item === 'object' && item.translation && typeof item.translation === 'object'
+                ? item.translation.status
+                : null) ??
+              (item && typeof item === 'object' ? item.status : null)
 
             if (id == null) {
               return (
@@ -77,7 +82,10 @@ export default function ResourceListPage({ title, resourcePath, baseRoute }) {
                 className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                 to={`${baseRoute}/${id}`}
               >
-                <span className="fw-semibold">{label}</span>
+                <span>
+                  <div className="fw-semibold">{label}</div>
+                  {secondary ? <div className="small text-muted">{String(secondary)}</div> : null}
+                </span>
                 <span className="badge text-bg-light">#{id}</span>
               </Link>
             )
