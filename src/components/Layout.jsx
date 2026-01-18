@@ -38,22 +38,22 @@ export default function Layout() {
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
                 <NavLink className={navLinkClassName} to="/projects">
-                  Projects
+                  Progetti
                 </NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className={navLinkClassName} to="/yarns">
-                  Yarns
+                  Filati
                 </NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className={navLinkClassName} to="/crafts">
-                  Crafts
+                  Tecniche
                 </NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className={navLinkClassName} to="/categories">
-                  Categories
+                  Fibre
                 </NavLink>
               </li>
             </ul>
@@ -66,9 +66,6 @@ export default function Layout() {
       </main>
 
       <footer className="border-top py-3">
-        <div className="container small text-muted">
-          Built with React + Bootstrap
-        </div>
       </footer>
     </div>
   )
