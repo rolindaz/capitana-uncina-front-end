@@ -8,7 +8,7 @@ function HomeCard({ title, description, to }) {
           <h5 className="card-title">{title}</h5>
           <p className="card-text text-muted">{description}</p>
           <Link className="btn btn-outline-primary" to={to}>
-            Browse {title}
+            Vedi {title}
           </Link>
         </div>
       </div>
@@ -30,25 +30,17 @@ export default function HomePage() {
             Use the sections below to browse what I’ve made and what I use.
           </p>
         </div>
-        <div className="col-12 col-lg-4">
-          <div className="p-4 bg-light border rounded">
-            <div className="fw-semibold mb-1">Quick start</div>
-            <div className="small text-muted">
-              This UI reads data from your API (configured via <code>.env</code>).
-            </div>
-          </div>
-        </div>
       </div>
 
-      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-3">
         <HomeCard
-          title="Projects"
-          description="All finished pieces and works-in-progress."
+          title="Progetti"
+          description="Qui ci sono molti miei progetti completati e lavori in corso, piano piano li caricherò tutti! Purtroppo soprattutto per i più vecchi non ho foto carine né informazioni complete, ma ora che ho cominciato questo progetto cercherò di essere molto più metodica nel documentare le mie imprese uncinate!"
           to="/projects"
         />
         <HomeCard
-          title="Yarns"
-          description="Yarns I’ve used (fiber, color, brand, etc.)."
+          title="Filati"
+          description="Il cuore di tutto! Un tuffo fra i gomitoli che ho usato per i miei progetti. Io sono una fan dei filati sottili e in particolare del cotone, ma amo sperimentare con qualsiasi cosa di morbido e soprattutto di colorato."
           to="/yarns"
         />
         <HomeCard

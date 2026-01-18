@@ -26,3 +26,7 @@ Each list item should contain an `id` (or `pk`/`uuid`) field.
 3) Run
 
 `npm run dev`
+
+## Header mascot image
+
+Place the mascot image at `public/brand-mascot.png` to show it next to the site title in the navbar.

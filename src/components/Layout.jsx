@@ -6,10 +6,20 @@ const navLinkClassName = ({ isActive }) =>
 export default function Layout() {
   return (
     <div className="min-vh-100 d-flex flex-column">
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav className="navbar navbar-expand-lg navbar-dark site-navbar">
         <div className="container">
-          <Link className="navbar-brand" to="/">
-            Capitana Uncina
+          <Link className="navbar-brand site-brand" to="/">
+            <img
+              src="/yarn(1).png"
+              height="80"
+              className="site-brand__img"
+              alt="Mascot"
+              loading="eager"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+            />
+            <span className="site-brand__title">Capitana Uncina</span>
           </Link>
 
           <button

@@ -1,6 +1,13 @@
 :root {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
     sans-serif;
+
+  /* Header theme */
+  /* Inspired by the mascot's shirt (warm orange) */
+  --warm-900: #CBC568;
+  --warm-800: #b5af5c;
+  --warm-700: #b4bd5a;
+  --warm-100: #fff3ea;
 }
 
 body {
@@ -10,4 +17,35 @@ body {
 
 #root {
   min-height: 100vh;
+}
+
+.site-navbar {
+  background: linear-gradient(180deg, var(--warm-700), var(--warm-900));
+}
+
+.site-navbar .navbar-brand,
+.site-navbar .nav-link {
+  font-family: "Walter Turncoat", system-ui, -apple-system, Segoe UI, Roboto,
+    Helvetica, Arial, sans-serif;
+  letter-spacing: 0.2px;
+}
+
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.site-brand__title {
+  font-size: 1.85rem;
+  line-height: 1;
+}
+
+.site-navbar .nav-link {
+  opacity: 0.9;
+}
+
+.site-navbar .nav-link:hover,
+.site-navbar .nav-link.active {
+  opacity: 1;
 }
