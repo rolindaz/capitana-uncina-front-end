@@ -203,7 +203,7 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
             </div>
           </div>
 
-          <div className="col-12 col-lg-7">
+          <div className="col-12 col-lg-7 px-4">
             <div className="d-flex gap-3 flex-wrap mb-4 justify-content-evenly">
               <MiniCalendar label="Iniziato" date={started} />
               <MiniCalendar label="Completato" date={completed} />
