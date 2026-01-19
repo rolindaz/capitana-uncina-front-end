@@ -82,24 +82,24 @@ function ProjectCard({ item, to }) {
           <div className="card-body">
             <div
               className="card-title fw-semibold mb-2 font-walter"
-              style={{ lineHeight: 1.2 }}
+              style={{ lineHeight: 1.2, color: '#F37046' }}
             >
               {title}
             </div>
 
             <div className="small text-muted">
               <div>
-                <span className="fw-semibold">Stato:</span> {status}
+                <span className="fw-semibold span-title">Stato:</span> {status}
               </div>
               <div>
-                <span className="fw-semibold">Categoria:</span> {category}
+                <span className="fw-semibold span-title">Categoria:</span> {category}
               </div>
               <div className="mt-2">
                 <div>
-                  <span className="fw-semibold">Aggiunto:</span> {createdAt}
+                  <span className="fw-semibold span-title">Aggiunto:</span> {createdAt}
                 </div>
                 <div>
-                  <span className="fw-semibold">Aggiornato:</span> {updatedAt}
+                  <span className="fw-semibold span-title">Aggiornato:</span> {updatedAt}
                 </div>
               </div>
             </div>
@@ -143,14 +143,14 @@ function YarnCard({ item, to }) {
 
             <div className="small text-muted">
               <div>
-                <span className="fw-semibold">Marca:</span> {brand}
+                <span className="fw-semibold span-title">Marca:</span> {brand}
               </div>
               <div className="mt-2">
                 <div>
-                  <span className="fw-semibold">Aggiunto:</span> {createdAt}
+                  <span className="fw-semibold span-title">Aggiunto:</span> {createdAt}
                 </div>
                 <div>
-                  <span className="fw-semibold">Aggiornato:</span> {updatedAt}
+                  <span className="fw-semibold span-title">Aggiornato:</span> {updatedAt}
                 </div>
               </div>
             </div>
@@ -253,22 +253,22 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
 
   return (
     <div className="container py-4">
-      <div className="row g-2 align-items-end mb-3">
+      <div className="row g-2 align-items-end mt-4 mb-5">
         <div className="col-12 col-md-4 d-flex justify-content-start">
-          <Link className="btn btn-outline-secondary font-quicksand" to="/">
+          <Link className="btn btn-cute font-quicksand" to="/">
             ← Indietro
           </Link>
         </div>
 
         <div className="col-12 col-md-4 text-center">
-          <h2 className="mb-1 font-walter">{title}</h2>
+          <h2 className="mb-1 font-walter fs-1">{title}</h2>
         </div>
 
         <div className="col-12 col-md-4 d-flex justify-content-md-end justify-content-start">
           {variant === 'projects' || variant === 'yarns' ? (
             <div className="dropdown">
               <button
-                className="btn btn-outline-secondary dropdown-toggle font-quicksand"
+                className="btn btn-cute dropdown-toggle font-quicksand"
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
@@ -397,7 +397,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
       ) : null}
 
       <div className="mt-4 d-flex justify-content-start">
-        <Link className="btn btn-outline-secondary font-quicksand" to="/">
+        <Link className="btn btn-cute font-quicksand" to="/">
           ← Indietro
         </Link>
       </div>

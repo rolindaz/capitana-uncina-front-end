@@ -68,6 +68,7 @@ body {
 
 .mini-calendar__top {
   background: linear-gradient(180deg, var(--warm-700), var(--warm-900));
+  text-align: center;
   color: #fff;
   padding: 8px 10px;
   font-weight: 700;
@@ -160,17 +161,30 @@ body {
 }
 
 .home-card--projects {
-  background: #fff0e7;
+  background: #f0a3898e;
 }
 
 .home-card--yarns {
-  background: #eef7ff;
+  background: #6379377e;
 }
 
 .home-card--crafts {
-  background: #f1f7ee;
+  background: #c9c356ad;
 }
 
 .home-card--categories {
-  background: #f5efff;
+  background: #e6900e9a;
+}
+
+.btn-cute {
+  border: 3px solid #F37046;
+}
+
+.btn-cute:hover {
+  background-color: #F37046;
+  color: white;
+}
+
+.span-title {
+  color: #82893e;
 }

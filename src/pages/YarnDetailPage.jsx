@@ -29,6 +29,20 @@ function buildMediaUrl(path) {
   return `${base}/storage/${clean}`
 }
 
+function formatMinMax(minValue, maxValue) {
+  const minPresent = minValue != null && String(minValue).trim() !== ''
+  const maxPresent = maxValue != null && String(maxValue).trim() !== ''
+
+  if (!minPresent && !maxPresent) return '—'
+  if (minPresent && !maxPresent) return String(minValue)
+  if (!minPresent && maxPresent) return String(maxValue)
+
+  const minText = String(minValue)
+  const maxText = String(maxValue)
+  if (minText === maxText) return minText
+  return `${minText} – ${maxText}`
+}
+
 function MiniCalendar({ label, date }) {
   return (
     <div className="mini-calendar font-quicksand">
@@ -51,14 +65,6 @@ function ProjectCard({ project }) {
   const id = project?.id
   const title = getItemLabel(project)
   const status = project?.translation?.status
-  const category =
-    project?.category?.translation?.name ??
-    project?.category?.translation?.title ??
-    project?.category?.name ??
-    project?.category?.key
-
-  const createdAt = formatDateEU(project?.created_at)
-  const updatedAt = formatDateEU(project?.updated_at)
   const img = buildMediaUrl(project?.image_path)
 
   if (id == null) return null
@@ -93,19 +99,6 @@ function ProjectCard({ project }) {
                   <span className="fw-semibold">Stato:</span> {String(status)}
                 </div>
               ) : null}
-              {category ? (
-                <div>
-                  <span className="fw-semibold">Categoria:</span> {String(category)}
-                </div>
-              ) : null}
-              <div className="mt-2">
-                <div>
-                  <span className="fw-semibold">Aggiunto:</span> {createdAt}
-                </div>
-                <div>
-                  <span className="fw-semibold">Aggiornato:</span> {updatedAt}
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -122,7 +115,7 @@ function FiberChip({ fiberYarn, isActive, onClick }) {
   return (
     <button
       type="button"
-      className={`btn btn-sm ${isActive ? 'btn-dark' : 'btn-outline-secondary'} font-quicksand`}
+      className={`btn btn-sm ${isActive ? 'btn-dark' : 'btn-cute'} font-quicksand`}
       onClick={onClick}
     >
       {String(name)}{pct != null ? ` • ${pct}%` : ''}
@@ -165,7 +158,6 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
 
   const createdAt = item?.created_at
   const updatedAt = item?.updated_at
-  const colorType = item?.translation?.color_type
 
   const fibers = Array.isArray(item?.fiber_yarns) ? item.fiber_yarns : []
   const activeFiber = fibers.find((fy) => (fy?.fiber?.id ?? fy?.fiber_id) === activeFiberId) || null
@@ -184,16 +176,16 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
 
   return (
     <div className="container py-4">
-      <div className="row g-2 align-items-end mb-3">
+      <div className="row g-2 align-items-end my-5">
         <div className="col-12 col-md-4 d-flex justify-content-start">
-          <Link className="btn btn-outline-secondary font-quicksand" to={baseRoute}>
+          <Link className="btn btn-cute font-quicksand" to={baseRoute}>
             ← Indietro
           </Link>
         </div>
 
         <div className="col-12 col-md-4 text-center">
-          <h2 className="mb-1 font-walter">{heading}</h2>
-          {item?.brand ? <div className="font-quicksand text-muted">{String(item.brand)}</div> : null}
+          <h2 className="mb-1 font-walter fs-1">{heading}</h2>
+          {item?.brand ? <div className="font-quicksand fs-4 text-muted">{String(item.brand)}</div> : null}
         </div>
 
         <div className="col-12 col-md-4 d-flex justify-content-md-end justify-content-start" />
@@ -224,7 +216,7 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
           </div>
 
           <div className="col-12 col-lg-7">
-            <div className="d-flex gap-3 flex-wrap mb-4">
+            <div className="d-flex gap-3 flex-wrap mb-4 justify-content-evenly">
               <MiniCalendar label="Aggiunto" date={createdAt} />
               <MiniCalendar label="Aggiornato" date={updatedAt} />
               <MiniStat label="Fibre" value={item?.fiber_types_number ?? fibers.length ?? '—'} />
@@ -241,53 +233,6 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
                   </div>
 
                   <div className="col-12 col-md-6">
-                    <div className="text-muted small">Peso</div>
-                    <div className="fw-semibold">{item?.weight || '—'}</div>
-                  </div>
-
-                  <div className="col-12 col-md-6">
-                    <div className="text-muted small">Categoria</div>
-                    <div className="fw-semibold">{item?.category || '—'}</div>
-                  </div>
-
-                  <div className="col-12 col-md-6">
-                    <div className="text-muted small">Colore</div>
-                    <div className="fw-semibold">{colorType || '—'}</div>
-                  </div>
-
-                  <div className="col-12 col-md-6">
-                    <div className="text-muted small">Peso unità</div>
-                    <div className="fw-semibold">
-                      {item?.unit_weight != null ? `${String(item.unit_weight)} g` : '—'}
-                    </div>
-                  </div>
-
-                  <div className="col-12 col-md-6">
-                    <div className="text-muted small">Metri</div>
-                    <div className="fw-semibold">
-                      {item?.meterage != null ? String(item.meterage) : '—'}
-                    </div>
-                  </div>
-
-                  <div className="col-12 col-md-6">
-                    <div className="text-muted small">Uncinetto</div>
-                    <div className="fw-semibold">
-                      {item?.min_hook_size || item?.max_hook_size
-                        ? `${item?.min_hook_size || '—'} – ${item?.max_hook_size || '—'}`
-                        : '—'}
-                    </div>
-                  </div>
-
-                  <div className="col-12 col-md-6">
-                    <div className="text-muted small">Ferri</div>
-                    <div className="fw-semibold">
-                      {item?.min_needle_size || item?.max_needle_size
-                        ? `${item?.min_needle_size || '—'} – ${item?.max_needle_size || '—'}`
-                        : '—'}
-                    </div>
-                  </div>
-
-                  <div className="col-12">
                     <div className="text-muted small">Fibre</div>
                     {fibers.length === 0 ? (
                       <div className="fw-semibold">—</div>
@@ -314,14 +259,53 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
                       </div>
                     ) : null}
                   </div>
+
+                  <div className="col-12 col-md-6">
+                    <div className="text-muted small">Peso</div>
+                    <div className="fw-semibold">{item?.weight || '—'}</div>
+                  </div>
+
+                  <div className="col-12 col-md-6">
+                    <div className="text-muted small">Categoria</div>
+                    <div className="fw-semibold">{item?.category || '—'}</div>
+                  </div>
+
+                  <div className="col-12 col-md-6">
+                    <div className="text-muted small">Peso unità</div>
+                    <div className="fw-semibold">
+                      {item?.unit_weight != null ? `${String(item.unit_weight)} g` : '—'}
+                    </div>
+                  </div>
+
+                  <div className="col-12 col-md-6">
+                    <div className="text-muted small">Metri</div>
+                    <div className="fw-semibold">
+                      {item?.meterage != null ? String(item.meterage) : '—'}
+                    </div>
+                  </div>
+                  
+                  <div className="col-12 col-md-6">
+                    <div className="text-muted small">Uncinetto</div>
+                    <div className="fw-semibold">
+                      {formatMinMax(item?.min_hook_size, item?.max_hook_size)}
+                    </div>
+                  </div>
+
+                  <div className="col-12 col-md-6">
+                    <div className="text-muted small">Ferri</div>
+                    <div className="fw-semibold">
+                      {formatMinMax(item?.min_needle_size, item?.max_needle_size)}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="mt-4">
               <div className="d-flex align-items-end justify-content-between gap-2">
-                <h5 className="font-walter mb-0">Progetti</h5>
-                <div className="small text-muted font-quicksand">{relatedProjects.length} totale</div>
+                <h5 className="font-walter mb-0">
+                  Progetti {relatedProjects.length > 0 ? `(${relatedProjects.length})` : ''}
+                </h5>
               </div>
 
               {relatedProjects.length === 0 ? (
@@ -341,7 +325,7 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
       ) : null}
 
       <div className="mt-4 d-flex justify-content-start">
-        <Link className="btn btn-outline-secondary font-quicksand" to={baseRoute}>
+        <Link className="btn btn-cute font-quicksand" to={baseRoute}>
           ← Indietro
         </Link>
       </div>
