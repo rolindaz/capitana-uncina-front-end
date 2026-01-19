@@ -252,9 +252,16 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
   const status = item?.translation?.status ?? '—'
   const notes = item?.translation?.notes
   const destinationUse = item?.translation?.destination_use
-  const categoryName =
-    item?.category?.translation?.name ?? item?.category?.translation?.title ?? item?.category?.name ?? item?.category?.key
+  const categoryName = item?.category?.translation?.name ?? item?.category?.key
+  const crafts = item?.crafts
 
+  const craftNames = useMemo(() => {
+    if (!Array.isArray(crafts)) return []
+    return crafts
+      .map((craft) => craft?.translation?.name ?? craft?.key)
+      .filter(Boolean)
+  }, [crafts])
+  
   const started = item?.started
   const completed = item?.completed
   const executionTime = item?.execution_time
@@ -342,6 +349,11 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
                   <div className="col-12 col-md-6">
                     <div className="text-muted small">Categoria</div>
                     <div className="fw-semibold">{categoryName || '—'}</div>
+                  </div>
+
+                  <div className="col-12 col-md-6">
+                    <div className="text-muted small">Tecniche</div>
+                    <div className="fw-semibold">{craftNames.length ? craftNames.join(', ') : '—'}</div>
                   </div>
 
                   <div className="col-12 col-md-6">
