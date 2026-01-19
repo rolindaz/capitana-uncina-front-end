@@ -23,6 +23,13 @@ function formatHours(value) {
   return `${number} h`
 }
 
+function formatInteger(value) {
+  if (value == null || value === '') return '—'
+  const number = typeof value === 'number' ? value : Number(value)
+  if (Number.isNaN(number)) return String(value)
+  return String(Math.trunc(number))
+}
+
 function buildMediaUrl(path) {
   if (!path) return null
   const asString = String(path)
@@ -86,7 +93,7 @@ function YarnUsedCard({ projectYarn }) {
             <div className="mt-2 small text-muted">
               {qty != null ? (
                 <div>
-                  <span className="fw-semibold">Quantità:</span> {String(qty)}
+                  <span className="fw-semibold">Quantità:</span> {formatInteger(qty)} gomitoli circa
                 </div>
               ) : null}
               {meterage != null ? (
@@ -156,16 +163,16 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
 
   return (
     <div className="container py-4">
-      <div className="row g-2 align-items-end mb-3">
+      <div className="row g-2 align-items-end my-5">
         <div className="col-12 col-md-4 d-flex justify-content-start">
-          <Link className="btn btn-outline-secondary font-quicksand" to={baseRoute}>
+          <Link className="btn btn-cute font-quicksand" to={baseRoute}>
             ← Indietro
           </Link>
         </div>
 
         <div className="col-12 col-md-4 text-center">
-          <h2 className="mb-1 font-walter">{heading}</h2>
-          {status ? <div className="font-quicksand text-muted">{String(status)}</div> : null}
+          <h2 className="mb-1 fs-1 font-walter">{heading}</h2>
+          {status ? <div className="font-quicksand fs-4 text-muted">{String(status)}</div> : null}
         </div>
 
         <div className="col-12 col-md-4 d-flex justify-content-md-end justify-content-start" />
@@ -196,11 +203,11 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
           </div>
 
           <div className="col-12 col-lg-7">
-            <div className="d-flex gap-3 flex-wrap mb-4">
-              <MiniCalendar label="Inizio" date={started} />
+            <div className="d-flex gap-3 flex-wrap mb-4 justify-content-evenly">
+              <MiniCalendar label="Iniziato" date={started} />
               <MiniCalendar label="Completato" date={completed} />
               <div className="mini-calendar font-quicksand">
-                <div className="mini-calendar__top">Tempo</div>
+                <div className="mini-calendar__top">Ore totali</div>
                 <div className="mini-calendar__date">{formatHours(executionTime)}</div>
               </div>
             </div>
@@ -216,7 +223,7 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
                   </div>
 
                   <div className="col-12 col-md-6">
-                    <div className="text-muted small">Uso</div>
+                    <div className="text-muted small">Per chi?</div>
                     <div className="fw-semibold">{destinationUse || '—'}</div>
                   </div>
 
@@ -250,8 +257,7 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
 
             <div className="mt-4">
               <div className="d-flex align-items-end justify-content-between gap-2">
-                <h5 className="font-walter mb-0">Filati usati</h5>
-                <div className="small text-muted font-quicksand">{yarnsUsed.length} totale</div>
+                <h5 className="font-walter mb-0">Filati usati {yarnsUsed.length > 0 ? `(${yarnsUsed.length})` : ''}</h5>
               </div>
 
               {yarnsUsed.length === 0 ? (
@@ -271,7 +277,7 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
       ) : null}
 
       <div className="mt-4 d-flex justify-content-start">
-        <Link className="btn btn-outline-secondary font-quicksand" to={baseRoute}>
+        <Link className="btn btn-cute font-quicksand" to={baseRoute}>
           ← Indietro
         </Link>
       </div>
