@@ -336,7 +336,7 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
 
             <div className="card shadow-sm">
               <div className="card-body font-quicksand">
-                <h5 className="font-walter mb-3">Dettagli</h5>
+                <h5 className="font-walter mb-3" style={{color: '#F37046'}}>Dettagli</h5>
 
                 <div className="row g-3">
                   <div className="col-12 col-md-6">
@@ -359,7 +359,7 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
 
             <div className="card shadow-sm mt-4">
               <div className="card-body font-quicksand">
-                <h5 className="font-walter mb-3">Schema</h5>
+                <h5 className="font-walter mb-3" style={{color: '#F37046'}}>Schema</h5>
 
                 <div className="row align-items-baseline justify-content-between flex-wrap">
                   <div className='col col-12 col-md-6'>
@@ -385,30 +385,25 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
 
             {notes ? (
               <div className="mt-4">
-                <h5 className="font-walter mb-2">Note</h5>
-                <div className="font-quicksand text-muted" style={{ whiteSpace: 'pre-wrap' }}>
+                <h5 className="font-walter fs-3 mb-2" style={{color: '#F37046'}}>Note</h5>
+                <div className="font-quicksand fs-5 text-muted" style={{ whiteSpace: 'pre-wrap' }}>
                   {String(notes)}
                 </div>
               </div>
             ) : null}
 
-            <div className="mt-4">
-              <div className="d-flex align-items-end justify-content-between gap-2">
-                <h5 className="font-walter mb-0">Filati usati {yarnGroups.length > 0 ? `(${yarnGroups.length})` : ''}</h5>
-              </div>
-
-              {yarnGroups.length === 0 ? (
-                <div className="alert alert-secondary mt-3" role="alert">
-                  Nessun filato associato a questo progetto.
+            {yarnGroups.length > 0 ? (
+              <div className="mt-4">
+                <div className="d-flex align-items-end justify-content-between gap-2">
+                  <h5 className="font-walter mb-0" style={{color: '#F37046'}}>Filati usati {yarnGroups.length > 0 ? `(${yarnGroups.length})` : ''}</h5>
                 </div>
-              ) : (
                 <div className="row g-3 mt-1">
                   {yarnGroups.map((group) => (
                     <YarnUsedCard key={group?.yarn_id ?? group?.yarn?.id ?? Math.random()} group={group} />
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            ) : null}
           </div>
         </div>
       ) : null}

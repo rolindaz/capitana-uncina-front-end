@@ -279,7 +279,7 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
 
             <div className="card shadow-sm">
               <div className="card-body font-quicksand">
-                <h5 className="font-walter mb-3">Dettagli</h5>
+                <h5 className="font-walter mb-3" style={{color: '#F37046'}}>Dettagli</h5>
 
                 <div className="row g-3">
                   <div className="col-12 col-md-6">
@@ -358,14 +358,14 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
 
             <div className="mt-4">
               <div className="d-flex align-items-end justify-content-between gap-2">
-                <h5 className="font-walter mb-0">
+                <h5 className="font-walter fs-3 mb-0" style={{color: '#F37046'}}>
                   Progetti {relatedProjects.length > 0 ? `(${relatedProjects.length})` : ''}
                 </h5>
               </div>
 
               {relatedProjects.length === 0 ? (
-                <div className="alert alert-secondary mt-3" role="alert">
-                  Nessun progetto associato a questo filato.
+                <div className="font-walter fs-5 mt-3" role="alert">
+                  Ancora nessuno!
                 </div>
               ) : (
                 <div className="row g-3 mt-1">
@@ -380,7 +380,7 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
             {yarnColorways.length > 0 ? (
               <div className="mt-5">
                 <div className="d-flex align-items-end justify-content-between gap-2">
-                  <h5 className="font-walter mb-0">
+                  <h5 className="font-walter mb-0" style={{color: '#F37046'}}>
                     Colori che ho usato finora ({yarnColorways.length})
                   </h5>
                 </div>
