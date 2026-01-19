@@ -107,6 +107,46 @@ function ProjectCard({ project }) {
   )
 }
 
+function ColorwayCard({ colorway }) {
+  const id = colorway?.id
+  const name =
+    colorway?.translation?.name ??
+    colorway?.title ??
+    colorway?.key ??
+    (id != null ? `Colorway #${id}` : 'Colorway')
+
+  const code = colorway?.color_code
+  const img = buildMediaUrl(colorway?.image_path)
+
+  return (
+    <div className="col-12 col-sm-6 col-lg-4">
+      <div className="card h-100 shadow-sm font-quicksand">
+        {img ? (
+          <img
+            src={img}
+            alt={String(name)}
+            className="card-img-top"
+            style={{ height: 160, objectFit: 'contain', background: '#f6f6f6' }}
+            loading="lazy"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none'
+            }}
+          />
+        ) : (
+          <div className="bg-light" style={{ height: 160 }} aria-hidden="true" />
+        )}
+
+        <div className="card-body">
+          <div className="fw-semibold font-walter" style={{ lineHeight: 1.2 }}>
+            {String(name)}
+          </div>
+          {code ? <div className="small text-muted">{String(code)}</div> : null}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function FiberChip({ fiberYarn, isActive, onClick }) {
   const fiber = fiberYarn?.fiber
   const name = fiber?.translation?.name ?? fiber?.translation?.title ?? fiber?.name ?? fiber?.key ?? 'Fibra'
@@ -174,6 +214,21 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
     return Array.from(unique.values())
   }, [item])
 
+  const yarnColorways = useMemo(() => {
+    const direct = Array.isArray(item?.colorways) ? item.colorways : []
+    const fromProjects = Array.isArray(item?.project_yarns)
+      ? item.project_yarns.map((py) => py?.colorway).filter(Boolean)
+      : []
+
+    const all = [...direct, ...fromProjects].filter(Boolean)
+    const unique = new Map()
+    for (const c of all) {
+      if (c?.id == null) continue
+      unique.set(c.id, c)
+    }
+    return Array.from(unique.values())
+  }, [item])
+
   return (
     <div className="container py-4">
       <div className="row g-2 align-items-end my-5">
@@ -215,7 +270,7 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
             </div>
           </div>
 
-          <div className="col-12 col-lg-7">
+          <div className="col-12 col-lg-7 px-4">
             <div className="d-flex gap-3 flex-wrap mb-4 justify-content-evenly">
               <MiniCalendar label="Aggiunto" date={createdAt} />
               <MiniCalendar label="Aggiornato" date={updatedAt} />
@@ -320,7 +375,23 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
                 </div>
               )}
             </div>
+
           </div>
+            {yarnColorways.length > 0 ? (
+              <div className="mt-5">
+                <div className="d-flex align-items-end justify-content-between gap-2">
+                  <h5 className="font-walter mb-0">
+                    Colori che ho usato finora ({yarnColorways.length})
+                  </h5>
+                </div>
+
+                <div className="row g-3 mt-1">
+                  {yarnColorways.map((c) => (
+                    <ColorwayCard key={c.id} colorway={c} />
+                  ))}
+                </div>
+              </div>
+            ) : null}
         </div>
       ) : null}
 

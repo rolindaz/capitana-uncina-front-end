@@ -30,6 +30,12 @@ function formatInteger(value) {
   return String(Math.trunc(number))
 }
 
+function toNumberOrNull(value) {
+  if (value == null || value === '') return null
+  const number = typeof value === 'number' ? value : Number(value)
+  return Number.isNaN(number) ? null : number
+}
+
 function buildMediaUrl(path) {
   if (!path) return null
   const asString = String(path)
@@ -52,58 +58,157 @@ function MiniCalendar({ label, date }) {
   )
 }
 
-function YarnUsedCard({ projectYarn }) {
-  const yarn = projectYarn?.yarn
-  const yarnId = yarn?.id ?? projectYarn?.yarn_id
+function YarnUsedCard({ group }) {
+  const yarn = group?.yarn
+  const yarnId = yarn?.id ?? group?.yarn_id
   const title = yarn?.name ?? (yarnId != null ? `Filato #${yarnId}` : 'Filato')
   const subtitleParts = [yarn?.brand, yarn?.weight].filter(Boolean)
   const subtitle = subtitleParts.length ? subtitleParts.join(' • ') : null
 
   const imgUrl = buildMediaUrl(yarn?.image_path)
 
-  const qty = projectYarn?.quantity
-  const meterage = projectYarn?.meterage
-  const weight = projectYarn?.weight
+  const entriesRaw = group?.entries
+  const entries = Array.isArray(entriesRaw) ? entriesRaw : []
+
+  const totalQtyNumber = entries.reduce((sum, entry) => {
+    const numeric = toNumberOrNull(entry?.quantity)
+    return numeric == null ? sum : sum + numeric
+  }, 0)
+  const hasAnyQty = entries.some((entry) => entry?.quantity != null && entry?.quantity !== '')
+  const qty = hasAnyQty ? totalQtyNumber : null
+
+  const totalMeterageNumber = entries.reduce((sum, entry) => {
+    const numeric = toNumberOrNull(entry?.meterage)
+    return numeric == null ? sum : sum + numeric
+  }, 0)
+  const hasAnyMeterage = entries.some((entry) => entry?.meterage != null && entry?.meterage !== '')
+  const meterage = hasAnyMeterage ? totalMeterageNumber : null
+
+  const totalWeightNumber = entries.reduce((sum, entry) => {
+    const numeric = toNumberOrNull(entry?.weight)
+    return numeric == null ? sum : sum + numeric
+  }, 0)
+  const hasAnyWeight = entries.some((entry) => entry?.weight != null && entry?.weight !== '')
+  const weight = hasAnyWeight ? totalWeightNumber : null
 
   return (
-    <div className="col-12 col-md-6 col-lg-4">
-      <Link to={yarnId != null ? `/yarns/${yarnId}` : '#'} className="text-decoration-none">
-        <div className="card h-100 shadow-sm font-quicksand">
-          {imgUrl ? (
-            <img
-              src={imgUrl}
-              alt={title}
-              className="card-img-top"
-              style={{ height: 160, objectFit: 'cover', background: '#f3f3f3' }}
-              loading="lazy"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none'
-              }}
-            />
-          ) : (
-            <div className="bg-light" style={{ height: 160 }} aria-hidden="true" />
-          )}
-
-          <div className="card-body">
-            <div className="fw-semibold font-walter" style={{ lineHeight: 1.2 }}>
-              {title}
+    <div className="col-12">
+      <Link to={yarnId != null ? `/yarns/${yarnId}` : '#'} className="text-decoration-none d-block">
+        <div className="card shadow-sm font-quicksand overflow-hidden">
+          <div className="d-flex yarn-used-card">
+            <div className="yarn-used-card__media" aria-hidden={!imgUrl}>
+              {imgUrl ? (
+                <img
+                  src={imgUrl}
+                  alt={title}
+                  className="yarn-used-card__img"
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              ) : (
+                <div className="yarn-used-card__img yarn-used-card__img--placeholder" aria-hidden="true" />
+              )}
             </div>
-            {subtitle ? <div className="small text-muted">{subtitle}</div> : null}
 
-            <div className="mt-2 small text-muted">
-              {qty != null ? (
-                <div>
-                  <span className="fw-semibold">Quantità:</span> {formatInteger(qty)} gomitoli circa
+            <div className="card-body flex-grow-1">
+              <div className="d-flex align-items-start justify-content-between gap-3 flex-wrap">
+                <div style={{ minWidth: 0 }}>
+                  <div className="fw-semibold font-walter" style={{ lineHeight: 1.2 }}>
+                    {title}
+                  </div>
+                  {subtitle ? <div className="small text-muted">{subtitle}</div> : null}
                 </div>
-              ) : null}
-              {meterage != null ? (
-                <div>
-                  <span className="fw-semibold">Metri:</span> {String(meterage)}
+
+                <div className="small text-muted" style={{ whiteSpace: 'nowrap' }}>
+                  {qty != null ? (
+                    <span>
+                      <span className="fw-semibold">Tot:</span> {formatInteger(qty)} gomitoli
+                    </span>
+                  ) : null}
+                  {meterage != null ? (
+                    <span className={qty != null ? 'ms-3' : ''}>
+                      <span className="fw-semibold">Metri:</span> {formatInteger(meterage)}
+                    </span>
+                  ) : null}
+                  {weight != null ? (
+                    <span className={qty != null || meterage != null ? 'ms-3' : ''}>
+                      <span className="fw-semibold">Peso:</span> {formatInteger(weight)} g
+                    </span>
+                  ) : null}
                 </div>
-              ) : null}
-              {weight != null ? (
-                <div>
-                  <span className="fw-semibold">Peso:</span> {String(weight)} g
+              </div>
+
+              {entries.length > 0 ? (
+                <div className="mt-3">
+                  <div className="yarnused-colorway-grid yarnused-colorway-grid--header text-muted">
+                    <span />
+                    <span>Colore</span>
+                    <span className="text-end">Qtà</span>
+                    <span className="text-end">Metri</span>
+                    <span className="text-end">Peso</span>
+                  </div>
+
+                  <div className="d-flex flex-column gap-2 mt-2">
+                    {entries.map((entry, index) => {
+                      const colorway = entry?.colorway
+                      const colorwayId = colorway?.id ?? entry?.colorway_id ?? index
+                      const colorwayName =
+                        colorway?.translation?.name ??
+                        colorway?.translation?.title ??
+                        colorway?.name ??
+                        colorway?.title ??
+                        colorway?.key ??
+                        (entry?.colorway_id != null ? `Colorway #${entry?.colorway_id}` : '—')
+
+                      const colorwayImg = buildMediaUrl(
+                        colorway?.image_path ??
+                          colorway?.image ??
+                          colorway?.photo_path ??
+                          entry?.colorway_image_path ??
+                          entry?.image_path
+                      )
+
+                      const entryQty = entry?.quantity
+                      const entryWeight = entry?.weight
+                      const entryMeterage = entry?.meterage
+
+                      return (
+                        <div key={String(colorwayId)} className="yarnused-colorway-grid">
+                          {colorwayImg ? (
+                            <img
+                              src={colorwayImg}
+                              alt={String(colorwayName)}
+                              className="colorway-thumb"
+                              loading="lazy"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                            />
+                          ) : (
+                            <div className="colorway-thumb colorway-thumb--placeholder" aria-hidden="true" />
+                          )}
+
+                          <div className="text-truncate" title={String(colorwayName)}>
+                            {String(colorwayName)}
+                          </div>
+
+                          <div className="text-end" style={{ whiteSpace: 'nowrap' }}>
+                            {entryQty != null && entryQty !== '' ? formatInteger(entryQty) : '—'}
+                          </div>
+
+                          <div className="text-end" style={{ whiteSpace: 'nowrap' }}>
+                            {entryMeterage != null && entryMeterage !== '' ? formatInteger(entryMeterage) : '—'}
+                          </div>
+
+                          <div className="text-end" style={{ whiteSpace: 'nowrap' }}>
+                            {entryWeight != null && entryWeight !== '' ? `${formatInteger(entryWeight)} g` : '—'}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
               ) : null}
             </div>
@@ -161,6 +266,22 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
 
   const imageUrl = useMemo(() => buildMediaUrl(item?.image_path), [item])
   const yarnsUsed = Array.isArray(item?.project_yarns) ? item.project_yarns : []
+
+  const yarnGroups = useMemo(() => {
+    const groups = new Map()
+    for (const py of yarnsUsed) {
+      const yarn = py?.yarn
+      const yarnId = yarn?.id ?? py?.yarn_id
+      const key = yarnId != null ? String(yarnId) : String(py?.id ?? Math.random())
+      const existing = groups.get(key)
+      if (existing) {
+        existing.entries.push(py)
+      } else {
+        groups.set(key, { yarn, yarn_id: yarnId, entries: [py] })
+      }
+    }
+    return Array.from(groups.values())
+  }, [yarnsUsed])
 
   return (
     <div className="container py-4">
@@ -273,17 +394,17 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
 
             <div className="mt-4">
               <div className="d-flex align-items-end justify-content-between gap-2">
-                <h5 className="font-walter mb-0">Filati usati {yarnsUsed.length > 0 ? `(${yarnsUsed.length})` : ''}</h5>
+                <h5 className="font-walter mb-0">Filati usati {yarnGroups.length > 0 ? `(${yarnGroups.length})` : ''}</h5>
               </div>
 
-              {yarnsUsed.length === 0 ? (
+              {yarnGroups.length === 0 ? (
                 <div className="alert alert-secondary mt-3" role="alert">
                   Nessun filato associato a questo progetto.
                 </div>
               ) : (
                 <div className="row g-3 mt-1">
-                  {yarnsUsed.map((py) => (
-                    <YarnUsedCard key={py.id ?? `${py.project_id}-${py.yarn_id}`} projectYarn={py} />
+                  {yarnGroups.map((group) => (
+                    <YarnUsedCard key={group?.yarn_id ?? group?.yarn?.id ?? Math.random()} group={group} />
                   ))}
                 </div>
               )}
