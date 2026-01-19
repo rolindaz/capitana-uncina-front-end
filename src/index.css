@@ -22,6 +22,14 @@ a:visited:active {
   color: #F37046;
 }
 
+.jumbotron {
+  background-image: url('yarn.png');
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(255, 255, 255, 0.763);
+  background-blend-mode: lighten;
+}
+
 .font-walter {
   font-family: "Walter Turncoat", system-ui, -apple-system, Segoe UI, Roboto,
     Helvetica, Arial, sans-serif;
@@ -74,7 +82,7 @@ a:visited:active {
 }
 
 .mini-calendar__top {
-  background: linear-gradient(180deg, var(--warm-700), var(--warm-900));
+  background: linear-gradient(180deg, #d7d27a 0%, var(--warm-900) 55%, #b8b252 100%);
   text-align: center;
   color: #fff;
   padding: 8px 10px;
@@ -95,7 +103,7 @@ a:visited:active {
 }
 
 .site-navbar {
-  background: linear-gradient(180deg, var(--warm-700), var(--warm-900));
+  background: linear-gradient(180deg, #d7d27a 0%, var(--warm-900) 55%, #b8b252 100%);
 }
 
 .site-navbar .navbar-brand,
@@ -139,14 +147,31 @@ a:visited:active {
   width: 400px;
 }
 
-.welcome {
-  font-family: "Quicksand", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  font-weight: 600;
-}
-
 /* Home cards */
 .home-card {
   border-radius: 0;
+}
+
+.home-card .btn {
+  font-family: "Quicksand", system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+    'Helvetica Neue', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.7rem 1.1rem;
+  color: #111;
+}
+
+.home-card .btn.btn-outline-dark {
+  border-width: 2px;
+  border-color: var(--home-accent, #111);
+}
+
+.home-card .btn:hover,
+.home-card .btn:focus {
+  background-color: var(--home-accent, #F37046);
+  border-color: var(--home-accent, #F37046);
+  color: #fff;
 }
 
 .home-card__title {
@@ -168,19 +193,23 @@ a:visited:active {
 }
 
 .home-card--projects {
-  background: #f0a3898e;
+  --home-accent: #f39a18;
+  background: linear-gradient(135deg, #f9e0c4 0%, #f7d7ad 55%, #f5d0a1 100%);
 }
 
 .home-card--yarns {
-  background: #6379377e;
+  --home-accent: #6f8a3f;
+  background: linear-gradient(135deg, #e6eedc 0%, #d7e1c9 55%, #ccd9bc 100%);
 }
 
 .home-card--crafts {
-  background: #c9c356ad;
+  --home-accent: #c7bc45;
+  background: linear-gradient(135deg, #f8f5dc 0%, #f3efc4 55%, #eee8b9 100%);
 }
 
 .home-card--categories {
-  background: #e6900e9a;
+  --home-accent: #e67d1c;
+  background: linear-gradient(135deg, #f9ddd2 0%, #f6d1bd 55%, #f2c7b1 100%);
 }
 
 .btn-cute {

@@ -156,6 +156,7 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
 
   const patternName = item?.pattern_name
   const patternUrl = item?.pattern_url
+  const designerName = item?.designer_name ?? item?.translation?.designer_name
   const size = item?.size
 
   const imageUrl = useMemo(() => buildMediaUrl(item?.image_path), [item])
@@ -231,16 +232,31 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
                     <div className="text-muted small">Taglia</div>
                     <div className="fw-semibold">{size || '—'}</div>
                   </div>
+                </div>
+              </div>
+            </div>
 
-                  <div className="col-12 col-md-6">
-                    <div className="text-muted small">Schema</div>
-                    {patternUrl ? (
-                      <a className="fw-semibold" href={patternUrl} target="_blank" rel="noreferrer">
-                        {patternName || patternUrl}
-                      </a>
-                    ) : (
-                      <div className="fw-semibold">{patternName || '—'}</div>
-                    )}
+            <div className="card shadow-sm mt-4">
+              <div className="card-body font-quicksand">
+                <h5 className="font-walter mb-3">Schema</h5>
+
+                <div className="row align-items-baseline justify-content-between flex-wrap">
+                  <div className='col col-12 col-md-6'>
+                    <span className="text-muted small">Designer</span>
+                    <div className="fw-semibold">{designerName || '—'}</div>
+                  </div>
+
+                  <div className='col col-12 col-md-6'>
+                    <span className="text-muted small">Schema</span>
+                    <div className="fw-semibold">
+                      {patternUrl ? (
+                        <a href={patternUrl} target="_blank" rel="noreferrer" className="text-decoration-none">
+                          {patternName || patternUrl}
+                        </a>
+                      ) : (
+                        <span>{patternName || '—'}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
