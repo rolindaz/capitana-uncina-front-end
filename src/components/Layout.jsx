@@ -23,7 +23,8 @@ const navLinkClassName = ({ isActive }) =>
 
 export default function Layout() {
   return (
-    // Contenitore principale del layout - a finestra completa - diviso in: navbar - main - footer
+    // Contenitore principale del layout - a finestra completa - diviso in: navbar - main (che contiene l'outlet) - footer; Tra un componente e l'altro verrà aggiornato solo l'outlet (quindi il contenuto del main), mentre tutto il resto resterà uguale
+     
     <div className="min-vh-100 d-flex flex-column">
 
       {/* Navbar */} 

@@ -180,20 +180,27 @@ a:visited:active {
 .yarn-ball {
   background-image: url('/yarnlady.png');
   background-size: contain;
-  background-position: right;
+  background-position: right center;
   background-repeat: no-repeat;
   display: block;
-  min-height: 450px;
-  width: 400px;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 4 / 5;
 }
 
 @media (max-width: 576px) {
   .yarn-ball {
-    width: 240px;
-    height: 240px;
-    min-height: 0;
+    max-width: 240px;
+    aspect-ratio: 1 / 1;
     margin: 0 auto;
     background-position: center;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .yarn-ball {
+    max-width: 260px;
+    background-position: left center;
   }
 }
 
