@@ -63,6 +63,7 @@ function MiniStat({ label, value }) {
 
 function ProjectCard({ project }) {
   const id = project?.id
+  const slug = project?.slug
   const title = getItemLabel(project)
   const status = project?.translation?.status
   const img = buildMediaUrl(project?.image_path)
@@ -71,7 +72,7 @@ function ProjectCard({ project }) {
 
   return (
     <div className="col-12 col-md-6 col-lg-4">
-      <Link to={`/projects/${id}`} className="text-decoration-none">
+      <Link to={`/projects/${encodeURIComponent(String(slug ?? id))}`} className="text-decoration-none">
         <div className="card h-100 shadow-sm font-quicksand">
           {img ? (
             <img
@@ -163,7 +164,8 @@ function FiberChip({ fiberYarn, isActive, onClick }) {
 }
 
 export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
-  const { id } = useParams()
+  const params = useParams()
+  const slug = params?.slug ?? params?.id
   const [item, setItem] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -176,7 +178,7 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
       try {
         setIsLoading(true)
         setError(null)
-        const detail = await fetchResourceDetail(resourcePath, id)
+        const detail = await fetchResourceDetail(resourcePath, slug)
         if (isMounted) setItem(detail)
       } catch (err) {
         if (isMounted) setError(err)
@@ -189,9 +191,9 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
     return () => {
       isMounted = false
     }
-  }, [resourcePath, id])
+  }, [resourcePath, slug])
 
-  const heading = item ? (item?.name ? String(item.name) : getItemLabel(item)) : `${title} #${id}`
+  const heading = item ? (item?.name ? String(item.name) : getItemLabel(item)) : `${title} #${slug}`
 
   const imageUrl = useMemo(() => buildMediaUrl(item?.image_path), [item])
 

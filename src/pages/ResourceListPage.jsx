@@ -22,6 +22,16 @@ function normalizeLabel(value) {
   return text ? text : null
 }
 
+function getItemSlug(item) {
+  const direct = normalizeLabel(item?.slug)
+  if (direct) return direct
+
+  const translationSlug = normalizeLabel(item?.translation?.slug)
+  if (translationSlug) return translationSlug
+
+  return null
+}
+
 function getProjectStatus(item) {
   const status = item?.translation?.status ?? item?.status
   return status ? String(status) : '—'
@@ -708,7 +718,14 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
             {paginatedItems.map((item) => {
               const id = getItemId(item)
               if (id == null) return null
-              return <ProjectCard key={id} item={item} to={`${baseRoute}/${id}`} />
+              const slugOrId = getItemSlug(item) ?? id
+              return (
+                <ProjectCard
+                  key={id}
+                  item={item}
+                  to={`${baseRoute}/${encodeURIComponent(String(slugOrId))}`}
+                />
+              )
             })}
           </div>
         ) : variant === 'yarns' ? (
@@ -716,7 +733,14 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
             {paginatedItems.map((item) => {
               const id = getItemId(item)
               if (id == null) return null
-              return <YarnCard key={id} item={item} to={`${baseRoute}/${id}`} />
+              const slugOrId = getItemSlug(item) ?? id
+              return (
+                <YarnCard
+                  key={id}
+                  item={item}
+                  to={`${baseRoute}/${encodeURIComponent(String(slugOrId))}`}
+                />
+              )
             })}
           </div>
         ) : (
@@ -743,7 +767,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
                 <Link
                   key={id}
                   className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                  to={`${baseRoute}/${id}`}
+                  to={`${baseRoute}/${encodeURIComponent(String(getItemSlug(item) ?? id))}`}
                 >
                   <span>
                     <div className="fw-semibold">{label}</div>

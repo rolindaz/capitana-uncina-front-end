@@ -61,6 +61,7 @@ function MiniCalendar({ label, date }) {
 function YarnUsedCard({ group }) {
   const yarn = group?.yarn
   const yarnId = yarn?.id ?? group?.yarn_id
+  const yarnSlug = yarn?.slug
   const title = yarn?.name ?? (yarnId != null ? `Filato #${yarnId}` : 'Filato')
   const subtitleParts = [yarn?.brand, yarn?.weight].filter(Boolean)
   const subtitle = subtitleParts.length ? subtitleParts.join(' • ') : null
@@ -93,7 +94,10 @@ function YarnUsedCard({ group }) {
 
   return (
     <div className="col-12">
-      <Link to={yarnId != null ? `/yarns/${yarnId}` : '#'} className="text-decoration-none d-block">
+      <Link
+        to={yarnSlug || yarnId != null ? `/yarns/${encodeURIComponent(String(yarnSlug ?? yarnId))}` : '#'}
+        className="text-decoration-none d-block"
+      >
         <div className="card shadow-sm font-quicksand overflow-hidden">
           <div className="d-flex yarn-used-card">
             <div className="yarn-used-card__media" aria-hidden={!imgUrl}>
@@ -220,7 +224,8 @@ function YarnUsedCard({ group }) {
 }
 
 export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
-  const { id } = useParams()
+  const params = useParams()
+  const slug = params?.slug ?? params?.id
   const [item, setItem] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -232,7 +237,7 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
       try {
         setIsLoading(true)
         setError(null)
-        const detail = await fetchResourceDetail(resourcePath, id)
+        const detail = await fetchResourceDetail(resourcePath, slug)
         if (isMounted) setItem(detail)
       } catch (err) {
         if (isMounted) setError(err)
@@ -245,9 +250,9 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
     return () => {
       isMounted = false
     }
-  }, [resourcePath, id])
+  }, [resourcePath, slug])
 
-  const heading = item ? getItemLabel(item) : `${title} #${id}`
+  const heading = item ? getItemLabel(item) : `${title} #${slug}`
 
   const status = item?.translation?.status ?? '—'
   const notes = item?.translation?.notes
