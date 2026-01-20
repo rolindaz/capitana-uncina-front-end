@@ -23,7 +23,10 @@ const navLinkClassName = ({ isActive }) =>
 
 export default function Layout() {
   return (
+    // Contenitore principale del layout - a finestra completa - diviso in: navbar - main - footer
     <div className="min-vh-100 d-flex flex-column">
+
+      {/* Navbar */} 
       <nav className="navbar navbar-expand-lg navbar-dark site-navbar">
         <div className="container">
           <Link className="navbar-brand site-brand" to="/">
@@ -37,7 +40,9 @@ export default function Layout() {
                 e.currentTarget.style.display = 'none'
               }}
             />
-            <span className="site-brand__title">Capitana Uncina</span>
+            <span className="site-brand__title">
+              Capitana Uncina
+            </span>
           </Link>
 
           <button
@@ -53,7 +58,7 @@ export default function Layout() {
           </button>
 
           <div className="collapse navbar-collapse" id="mainNav">
-            <ul className="navbar-nav ms-auto">
+            <ul className="navbar-nav ms-lg-auto">
               <li className="nav-item">
                 <NavLink className={navLinkClassName} to="/projects">
                   Progetti
@@ -78,11 +83,13 @@ export default function Layout() {
           </div>
         </div>
       </nav>
-
+      
+      {/* Main */} 
       <main className="flex-grow-1">
         <Outlet />
       </main>
-
+      
+      {/* Footer */} 
       <footer className="site-footer py-3">
         <div className="container">
           <div className="d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">

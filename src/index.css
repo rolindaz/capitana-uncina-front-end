@@ -106,6 +106,33 @@ a:visited:active {
   background: linear-gradient(180deg, #d7d27a 0%, var(--warm-900) 55%, #b8b252 100%);
 }
 
+/* Make the mobile navbar toggler more visible */
+.site-navbar .navbar-toggler {
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.site-navbar .navbar-toggler:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.35);
+}
+
+/* Brighter + thicker hamburger icon (overrides Bootstrap default) */
+.site-navbar .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255,255,255,1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='3' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Center nav links when the collapse menu is open (mobile/tablet) */
+.site-navbar .navbar-collapse.show .navbar-nav,
+.site-navbar .navbar-collapse.collapsing .navbar-nav {
+  width: 100%;
+  text-align: center;
+}
+
+.site-navbar .navbar-collapse.show .nav-link,
+.site-navbar .navbar-collapse.collapsing .nav-link {
+  justify-content: center;
+}
+
 .site-footer {
   background: linear-gradient(180deg, #d7d27a 0%, var(--warm-900) 55%, #b8b252 100%);
   color: #fff;
@@ -155,8 +182,19 @@ a:visited:active {
   background-size: contain;
   background-position: right;
   background-repeat: no-repeat;
+  display: block;
   min-height: 450px;
   width: 400px;
+}
+
+@media (max-width: 576px) {
+  .yarn-ball {
+    width: 240px;
+    height: 240px;
+    min-height: 0;
+    margin: 0 auto;
+    background-position: center;
+  }
 }
 
 /* Home cards */
