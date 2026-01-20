@@ -1,4 +1,4 @@
-
+// #region Funzioni per risorse in generale
 
 // Creo una funzione per ottenere l'id dell'item
 export function getResourceId(item) {
@@ -28,6 +28,10 @@ export function getItemSlug(item) {
   return null
 }
 
+//#endregion
+
+//#region Funzioni per progetti
+
 // Una per ottenere lo stato del progetto
 export function getProjectStatus(item) {
   const status = item?.translation?.status
@@ -41,7 +45,9 @@ export function getProjectCategory(item) {
   return label ? String(label) : '—'
 }
 
+//#endregion
 
+//#region Funzioni per filati
 
 // Una per ottenere il peso del filato
 export function getYarnStandardWeight(item) {
@@ -63,3 +69,4 @@ export function getYarnFiberNames(item) {
   return Array.from(new Set(yarnFibers))
 }
 
+//#endregion

@@ -11,13 +11,6 @@ export function formatDate(value) {
   return `${day}/${month}/${year}`
 }
 
-export function formatHours(value) {
-  if (value == null || value === '') return '—'
-  const number = typeof value === 'number' ? value : Number(value)
-  if (Number.isNaN(number)) return String(value)
-  return `${number} h`
-}
-
 export function formatInteger(value) {
   if (value == null || value === '') return '—'
   const number = typeof value === 'number' ? value : Number(value)

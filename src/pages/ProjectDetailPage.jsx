@@ -8,7 +8,6 @@ import { fetchResourceDetail } from '../api/resources'
 import { getResourceLabel } from '../resource/get-data'
 import {
   formatDate,
-  formatHours,
   formatInteger,
   toNumberOrNull,
   buildMediaUrl
@@ -16,9 +15,7 @@ import {
 
 //#endregion
 
-// Funzione per ottenere il nome delle risorse (forse isolare tutte le funzioni per approvvigionamento dati in un file separato?
-
-
+// Minicomponente calendario
 function MiniCalendar({ label, date }) {
   return (
     <div className="mini-calendar font-quicksand">
@@ -28,19 +25,24 @@ function MiniCalendar({ label, date }) {
   )
 }
 
-function YarnUsedCard({ group }) {
-  const yarn = group?.yarn
-  const yarnId = yarn?.id ?? group?.yarn_id
+// Componente per la visualizzazione dei filati utilizzati
+function YarnUsedCard({ list }) {
+
+  // Prendo i dati dei filati (id, slug, nome, marca, peso standard, immagine)
+  const yarn = list?.yarn
+  const yarnId = yarn?.id ?? list?.yarn_id
   const yarnSlug = yarn?.slug
   const title = yarn?.name ?? (yarnId != null ? `Filato #${yarnId}` : 'Filato')
   const subtitleParts = [yarn?.brand, yarn?.weight].filter(Boolean)
   const subtitle = subtitleParts.length ? subtitleParts.join(' • ') : null
 
-  const imgUrl = buildMediaUrl(yarn?.image_path)
+  const yarnImgUrl = buildMediaUrl(yarn?.image_path)
 
-  const entriesRaw = group?.entries
+  // Prendo i singoli oggetti della lista (se ce ne sono più d'uno) di filati
+  const entriesRaw = list?.entries
   const entries = Array.isArray(entriesRaw) ? entriesRaw : []
 
+  // Calcolo per ogni voce della lista la quantità di filato (n. di gomitoli), i metri e i grammi usati (se presenti, sennò null)
   const totalQtyNumber = entries.reduce((sum, entry) => {
     const numeric = toNumberOrNull(entry?.quantity)
     return numeric == null ? sum : sum + numeric
@@ -70,10 +72,10 @@ function YarnUsedCard({ group }) {
       >
         <div className="card shadow-sm font-quicksand overflow-hidden">
           <div className="d-flex yarn-used-card">
-            <div className="yarn-used-card__media" aria-hidden={!imgUrl}>
-              {imgUrl ? (
+            <div className="yarn-used-card__media" aria-hidden={!yarnImgUrl}>
+              {yarnImgUrl ? (
                 <img
-                  src={imgUrl}
+                  src={yarnImgUrl}
                   alt={title}
                   className="yarn-used-card__img"
                   loading="lazy"
@@ -113,37 +115,45 @@ function YarnUsedCard({ group }) {
                   ) : null}
                 </div>
               </div>
-
+              
+              {/* N.B.: ENTRY = UN'ISTANZA DI PROJECT_YARN */}
               {entries.length > 0 ? (
                 <div className="mt-3">
+
+                  {/* Titoli delle colonne */}
                   <div className="yarnused-colorway-grid yarnused-colorway-grid--header text-muted">
                     <span />
-                    <span>Colore</span>
-                    <span className="text-end">Qtà</span>
-                    <span className="text-end">Metri</span>
-                    <span className="text-end">Peso</span>
+                    <span>
+                      Colore
+                    </span>
+                    <span className="text-end">
+                      Qtà
+                    </span>
+                    <span className="text-end">
+                      Metri
+                    </span>
+                    <span className="text-end">
+                      Peso
+                    </span>
                   </div>
 
+                  {/* Ciclo sulla entry/project_yarn per formare le righe della tabella */}
                   <div className="d-flex flex-column gap-2 mt-2">
                     {entries.map((entry, index) => {
+
+                      {/* Mi prendo il colore */}
                       const colorway = entry?.colorway
-                      const colorwayId = colorway?.id ?? entry?.colorway_id ?? index
+                      const colorwayId = colorway?.id ?? entry?.colorway_id
                       const colorwayName =
                         colorway?.translation?.name ??
-                        colorway?.translation?.title ??
-                        colorway?.name ??
-                        colorway?.title ??
                         colorway?.key ??
                         (entry?.colorway_id != null ? `Colorway #${entry?.colorway_id}` : '—')
 
                       const colorwayImg = buildMediaUrl(
-                        colorway?.image_path ??
-                          colorway?.image ??
-                          colorway?.photo_path ??
-                          entry?.colorway_image_path ??
-                          entry?.image_path
+                        colorway?.image_path
                       )
 
+                      {/* Mi prendo quantità, peso e metraggio */}
                       const entryQty = entry?.quantity
                       const entryWeight = entry?.weight
                       const entryMeterage = entry?.meterage
@@ -218,19 +228,25 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
     }
 
     load()
+    
     return () => {
       isMounted = false
     }
   }, [resourcePath, slug])
 
+  console.log(item);
+
+  // Prendo il titlo del progetto
   const heading = item ? getResourceLabel(item) : `${title} #${slug}`
 
+  // Prendo i dettagli del progetto che voglio mostrare (stato, note, per chi è, categoria, tecniche, data di inizio, data di fine, ore totali, nome e link dello schema, nome del designer, taglia, percorso dell'immagine, lista di filati usati (project_yarns))
   const status = item?.translation?.status ?? '—'
   const notes = item?.translation?.notes
   const destinationUse = item?.translation?.destination_use
   const categoryName = item?.category?.translation?.name ?? item?.category?.key
   const crafts = item?.crafts
 
+  // Estraggo e salvo i nomi delle tecniche come useMemo
   const craftNames = useMemo(() => {
     if (!Array.isArray(crafts)) return []
     return crafts
@@ -250,33 +266,37 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
   const imageUrl = useMemo(() => buildMediaUrl(item?.image_path), [item])
   const yarnsUsed = Array.isArray(item?.project_yarns) ? item.project_yarns : []
 
-  const yarnGroups = useMemo(() => {
-    const groups = new Map()
+  // Estraggo la lista di id dei filati usati e lo salvo con useMemo
+  const yarnLists = useMemo(() => {
+    const lists = new Map()
     for (const py of yarnsUsed) {
       const yarn = py?.yarn
       const yarnId = yarn?.id ?? py?.yarn_id
       const key = yarnId != null ? String(yarnId) : String(py?.id ?? Math.random())
-      const existing = groups.get(key)
+      const existing = lists.get(key)
       if (existing) {
         existing.entries.push(py)
       } else {
-        groups.set(key, { yarn, yarn_id: yarnId, entries: [py] })
+        lists.set(key, { yarn, yarn_id: yarnId, entries: [py] })
       }
     }
-    return Array.from(groups.values())
+    return Array.from(lists.values())
   }, [yarnsUsed])
 
   return (
     <div className="container py-4">
+
+      {/* PRIMA SEZIONE del main: riga con: pulsante torna indietro + titolo e stato del progetto */}
       <div className="row g-2 align-items-end my-5">
 
-        {/* PRIMA SEZIONE del main: pulsante torna indietro */}
+        {/* Pulsante torna indietro */}
         <div className="col-12 col-md-4 d-flex justify-content-start">
           <Link className="btn btn-cute font-quicksand" to={baseRoute}>
             ← Indietro
           </Link>
         </div>
 
+        {/* Titolo */}
         <div className="col-12 col-md-4 text-center">
           <h2 className="mb-1 fs-1 font-walter">{heading}</h2>
           {status ? <div className="font-quicksand fs-4 text-muted">{String(status)}</div> : null}
@@ -288,8 +308,11 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
       {isLoading ? <Loading label="Caricamento…" /> : null}
       {error ? <ErrorState title="Could not load item" error={error} /> : null}
 
+      {/* SECONDA SEZIONE del main: Scheda dettaglio progetto */}
       {!isLoading && !error && item ? (
         <div className="row g-4">
+          
+          {/* Immagine progetto */}
           <div className="col-12 col-lg-5">
             <div className="polaroid">
               {imageUrl ? (
@@ -308,17 +331,19 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
               <div className="polaroid__caption font-walter">{heading}</div>
             </div>
           </div>
-
+          
           <div className="col-12 col-lg-7 px-4">
+            {/* Date di inizio e conclusione */}
             <div className="d-flex gap-3 flex-wrap mb-4 justify-content-evenly">
               <MiniCalendar label="Iniziato" date={started} />
               <MiniCalendar label="Completato" date={completed} />
               <div className="mini-calendar font-quicksand">
                 <div className="mini-calendar__top">Ore totali</div>
-                <div className="mini-calendar__date">{formatHours(executionTime)}</div>
+                <div className="mini-calendar__date">{executionTime ? `${executionTime} h` : '-'}</div>
               </div>
             </div>
-
+            
+            {/* Dettagli */}
             <div className="card shadow-sm">
               <div className="card-body font-quicksand">
                 <h5 className="font-walter mb-3" style={{color: '#F37046'}}>Dettagli</h5>
@@ -346,7 +371,8 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
                 </div>
               </div>
             </div>
-
+            
+            {/* Schema */}
             <div className="card shadow-sm mt-4">
               <div className="card-body font-quicksand">
                 <h5 className="font-walter mb-3" style={{color: '#F37046'}}>Schema</h5>
@@ -372,7 +398,8 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
                 </div>
               </div>
             </div>
-
+            
+            {/* Note */}
             {notes ? (
               <div className="mt-4">
                 <h5 className="font-walter fs-3 mb-2" style={{color: '#F37046'}}>Note</h5>
@@ -382,14 +409,15 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
               </div>
             ) : null}
 
-            {yarnGroups.length > 0 ? (
+            {/* Scheda filati usati */}
+            {yarnLists.length > 0 ? (
               <div className="mt-4">
                 <div className="d-flex align-items-end justify-content-between gap-2">
-                  <h5 className="font-walter mb-0" style={{color: '#F37046'}}>Filati usati {yarnGroups.length > 0 ? `(${yarnGroups.length})` : ''}</h5>
+                  <h5 className="font-walter mb-0" style={{color: '#F37046'}}>Filati usati {yarnLists.length > 0 ? `(${yarnLists.length})` : ''}</h5>
                 </div>
                 <div className="row g-3 mt-1">
-                  {yarnGroups.map((group) => (
-                    <YarnUsedCard key={group?.yarn_id ?? group?.yarn?.id ?? Math.random()} group={group} />
+                  {yarnLists.map((list) => (
+                    <YarnUsedCard key={list?.yarn_id ?? list?.yarn?.id ?? Math.random()} list={list} />
                   ))}
                 </div>
               </div>
