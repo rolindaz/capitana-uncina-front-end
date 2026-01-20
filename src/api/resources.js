@@ -1,11 +1,11 @@
-import { fetchJson, normalizeDetailPayload, normalizeListPayload } from './http'
+import { fetchJson } from './http'
 
 export async function fetchResourceList(resourcePath) {
   const payload = await fetchJson(resourcePath)
-  return normalizeListPayload(payload)
+  return Array.isArray(payload?.data) ? payload.data : []
 }
 
 export async function fetchResourceDetail(resourcePath, id) {
   const payload = await fetchJson(`${resourcePath}/${id}`)
-  return normalizeDetailPayload(payload)
+  return payload?.data ?? null
 }
