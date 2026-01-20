@@ -4,13 +4,15 @@ export default function NotFoundPage() {
   return (
     <div className="container py-5">
       <div className="alert alert-warning" role="alert">
-        <div className="fw-semibold">Page not found</div>
+        <div className="fw-semibold">
+          Pagina non trovata
+        </div>
         <div className="small mt-1">
-          The page you’re looking for doesn’t exist.
+          La pagina che stai cercando non esiste!
         </div>
       </div>
-      <Link className="btn btn-primary" to="/">
-        Go home
+      <Link className="btn btn-outline-dark" to="/">
+        Vai alla home
       </Link>
     </div>
   )
