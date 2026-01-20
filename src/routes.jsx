@@ -7,7 +7,6 @@ import Layout from './components/Layout'
 import HomePage from './pages/HomePage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProjectDetailPage from './pages/ProjectDetailPage'
-import ResourceDetailPage from './pages/ResourceDetailPage'
 import ResourceListPage from './pages/ResourceListPage'
 import YarnDetailPage from './pages/YarnDetailPage'
 
@@ -84,7 +83,7 @@ export const router = createBrowserRouter([
         ),
       },
 
-      {
+      /* {
         path: 'crafts',
         element: (
           <ResourceListPage
@@ -95,7 +94,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'crafts/:id',
+        path: 'crafts/:slug',
         element: (
           <ResourceDetailPage
             title={resources.crafts.title}
@@ -116,7 +115,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'categories/:id',
+        path: 'categories/:slug',
         element: (
           <ResourceDetailPage
             title={resources.categories.title}
@@ -124,7 +123,7 @@ export const router = createBrowserRouter([
             baseRoute={resources.categories.uiPath}
           />
         ),
-      },
+      }, */
 
       { path: '*', element: <NotFoundPage /> },
     ],

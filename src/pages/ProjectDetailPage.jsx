@@ -1,3 +1,5 @@
+//#region Importazioni
+
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import ErrorState from '../components/ErrorState'
@@ -5,6 +7,9 @@ import Loading from '../components/Loading'
 import { fetchResourceDetail } from '../api/resources'
 import { API_BASE_URL } from '../api/http'
 
+//#endregion
+
+// Funzione per ottenere il nome delle risorse (forse isolare tutte le funzioni per approvvigionamento dati in un file separato?
 function getProjectLabel(project) {
   const translation = project?.translation
   const label =
@@ -243,6 +248,7 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  // Fetch del progetto
   useEffect(() => {
     let isMounted = true
 
@@ -311,6 +317,8 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
   return (
     <div className="container py-4">
       <div className="row g-2 align-items-end my-5">
+
+        {/* PRIMA SEZIONE del main: pulsante torna indietro */}
         <div className="col-12 col-md-4 d-flex justify-content-start">
           <Link className="btn btn-cute font-quicksand" to={baseRoute}>
             ← Indietro
@@ -438,6 +446,7 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
         </div>
       ) : null}
 
+      {/* TERZA SEZIONE del main: pulsante torna indietro */}
       <div className="mt-4 d-flex justify-content-start">
         <Link className="btn btn-cute font-quicksand" to={baseRoute}>
           ← Indietro
