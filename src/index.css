@@ -22,7 +22,7 @@ a:visited:active {
   color: #F37046;
 }
 
-.jumbotron {
+.hero {
   background-image: url('yarn.png');
   background-size: cover;
   background-position: center;

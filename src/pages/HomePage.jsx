@@ -1,12 +1,17 @@
 import { Link } from 'react-router-dom'
 
+// Creo il minicomponente HomeCard per strutturare la divisione delle sezioni e renderle il più omogenee e armoniose possibile
 function HomeCard({ title, description, to, variant }) {
   return (
     <div className="col-12 col-md-6">
       <div className={`card home-card home-card--${variant} h-100 border-0`}>
         <div className="card-body p-4 p-lg-5">
-          <h3 className="home-card__title mb-3">{title}</h3>
-          <p className="home-card__text mb-4">{description}</p>
+          <h3 className="home-card__title mb-3">
+            {title}  
+          </h3>
+          <p className="home-card__text mb-4">
+            {description}
+          </p>
           <Link className="btn btn-outline-dark" to={to}>
             Vedi {title}
           </Link>
@@ -19,16 +24,15 @@ function HomeCard({ title, description, to, variant }) {
 export default function HomePage() {
   return (
     <div>
-      <div className="jumbotron">
+      <div className="hero">
         <div className="container py-5">
           <div className="row align-items-center g-4 mb-5">
-            <div className="col-12 col-md-4 col-lg-4 d-flex justify-content-center justify-content-md-start">
+            <div className="col-12 col-md-4 d-flex justify-content-center justify-content-md-start">
               <div className="yarn-ball" />
             </div>
-            <div className="col-12 col-md-8 col-lg-8">
+            <div className="col-12 col-md-8">
               <h1 className="font-quicksand fw-semibold display-6 mb-5">
                 Benvenute e benvenuti nella casa
-                <br />
                 virtuale della mia grande passione!
               </h1>
               <p className="font-quicksand fw-medium lead mb-3">
