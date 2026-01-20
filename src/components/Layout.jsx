@@ -1,4 +1,22 @@
+// Layout è il mio componente principale, quello attribuito alla Homepage e alla rotta '/'. Tutte le rotte figlie lo adottano, inserendo le specifiche dei propri componenti al suo interno
+
+// #region Importazione
+
+// Importo gli strumenti del router per navigazione e routing:
+/*
+
+Link: il corrispondente in React del tag <a> - Reindirizza l'utente dal lato client, senza ricaricare la pagina
+
+NavLink: E' un wrapper per Link che serve a passargli dei props per stilizzare gli stati (attivo o in attesa)
+
+Outlet: Renderizza la rotta figlia se la trova (simile a @yield in Laravel)
+
+*/
 import { Link, NavLink, Outlet } from 'react-router-dom'
+
+// #endregion
+
+// Creo una funzione per attribuire automaticamente ai link attivi la classe 'active' e gestirne così lo stile in modo automatico
 
 const navLinkClassName = ({ isActive }) =>
   `nav-link${isActive ? ' active' : ''}`

@@ -1,3 +1,5 @@
+// Definisco un minicomponente per la renderizzazione chiara ed efficiente degli errori
+
 export default function ErrorState({ title = 'Something went wrong', error }) {
   const message = error?.message || String(error || '')
 
