@@ -63,7 +63,7 @@ function MiniStat({ label, value }) {
 
 function ProjectCard({ project }) {
   const id = project?.id
-  const slug = project?.slug
+  const slug = project?.slug ?? project?.translation?.slug
   const title = getItemLabel(project)
   const status = project?.translation?.status
   const img = buildMediaUrl(project?.image_path)
