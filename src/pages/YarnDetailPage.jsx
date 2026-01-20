@@ -1,66 +1,20 @@
+//#region Importazioni
+
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import ErrorState from '../components/ErrorState'
 import Loading from '../components/Loading'
 import { fetchResourceDetail } from '../api/resources'
-import { API_BASE_URL } from '../api/http'
+import { getResourceLabel } from '../resource/get-data'
+import { formatMinMax, formatDate, buildMediaUrl } from '../resource/format-data'
 
-function getProjectLabel(project) {
-  const translation = project?.translation
-  const label =
-    translation?.name ??
-    translation?.title ??
-    project?.name ??
-    project?.title
-
-  if (label != null && String(label).trim() !== '') return String(label)
-
-  const id = project?.id
-  return id != null ? `Progetto #${id}` : 'Progetto'
-}
-
-function formatDateEU(value) {
-  if (!value) return '—'
-  const date = value instanceof Date ? value : new Date(value)
-  if (Number.isNaN(date.getTime())) return String(value)
-  const dd = String(date.getDate()).padStart(2, '0')
-  const mm = String(date.getMonth() + 1).padStart(2, '0')
-  const yyyy = String(date.getFullYear())
-  return `${dd}/${mm}/${yyyy}`
-}
-
-function buildMediaUrl(path) {
-  if (!path) return null
-  const asString = String(path)
-  if (/^https?:\/\//i.test(asString)) return asString
-
-  const clean = asString.replace(/^\/+/, '')
-  const base = (API_BASE_URL || '').replace(/\/+$/, '')
-
-  if (!base) return `/${clean}`
-  if (clean.startsWith('storage/')) return `${base}/${clean}`
-  return `${base}/storage/${clean}`
-}
-
-function formatMinMax(minValue, maxValue) {
-  const minPresent = minValue != null && String(minValue).trim() !== ''
-  const maxPresent = maxValue != null && String(maxValue).trim() !== ''
-
-  if (!minPresent && !maxPresent) return '—'
-  if (minPresent && !maxPresent) return String(minValue)
-  if (!minPresent && maxPresent) return String(maxValue)
-
-  const minText = String(minValue)
-  const maxText = String(maxValue)
-  if (minText === maxText) return minText
-  return `${minText} – ${maxText}`
-}
+//#endregion
 
 function MiniCalendar({ label, date }) {
   return (
     <div className="mini-calendar font-quicksand">
       <div className="mini-calendar__top">{label}</div>
-      <div className="mini-calendar__date">{formatDateEU(date)}</div>
+      <div className="mini-calendar__date">{formatDate(date)}</div>
     </div>
   )
 }
@@ -74,10 +28,13 @@ function MiniStat({ label, value }) {
   )
 }
 
+// Scheda progetti creati con il filato corrente
 function ProjectCard({ project }) {
+
+  // Prendo i dati che mi servono del progetto (id, slug, nome, status, immagine)
   const id = project?.id
-  const slug = project?.slug ?? project?.translation?.slug
-  const title = getProjectLabel(project)
+  const slug = project?.translation?.slug
+  const title = getResourceLabel(project)
   const status = project?.translation?.status
   const img = buildMediaUrl(project?.image_path)
 
@@ -121,13 +78,15 @@ function ProjectCard({ project }) {
   )
 }
 
+// Scheda colore disponibile
 function ColorwayCard({ colorway }) {
+
+  // Prendo i dati che mi servono del colore (id, nome (per ora key), codice e immagine)
   const id = colorway?.id
   const name =
     colorway?.translation?.name ??
     colorway?.key ??
-    (id != null ? `Colorway #${id}` : 'Colorway')
-
+    (id != null ? `Colore #${id}` : 'Colore')
   const code = colorway?.color_code
   const img = buildMediaUrl(colorway?.image_path)
 
@@ -139,7 +98,7 @@ function ColorwayCard({ colorway }) {
             src={img}
             alt={String(name)}
             className="card-img-top"
-            style={{ height: 160, objectFit: 'contain', background: '#f6f6f6' }}
+            style={{ height: 160, width: 160, objectFit: 'cover', background: '#f6f6f6', margin: '0 auto', borderRadius: 0 }}
             loading="lazy"
             onError={(e) => {
               e.currentTarget.style.display = 'none'
@@ -160,9 +119,10 @@ function ColorwayCard({ colorway }) {
   )
 }
 
+// Etichetta fibra
 function FiberChip({ fiberYarn, isActive, onClick }) {
   const fiber = fiberYarn?.fiber
-  const name = fiber?.translation?.name ?? fiber?.translation?.title ?? fiber?.name ?? fiber?.key ?? 'Fibra'
+  const name = fiber?.translation?.name ?? fiber?.key ?? 'Fibra'
   const pct = fiberYarn?.percentage
 
   return (
@@ -184,6 +144,7 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
   const [error, setError] = useState(null)
   const [activeFiberId, setActiveFiberId] = useState(null)
 
+  // Fetch Yarn Data
   useEffect(() => {
     let isMounted = true
 
@@ -206,6 +167,7 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
     }
   }, [resourcePath, slug])
 
+  // Prendo i dati che mi servono del filato (nome, immagine, creato, aggiornato, fibre, progetti correlati, colori disponibili)
   const heading = item ? (item?.name ? String(item.name) : `${title} #${slug}`) : `${title} #${slug}`
 
   const imageUrl = useMemo(() => buildMediaUrl(item?.image_path), [item])
@@ -245,13 +207,18 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
 
   return (
     <div className="container py-4">
+
+      {/* PRIMA SEZIONE del main: riga con: pulsante torna indietro | nome e marca del filato */}
       <div className="row g-2 align-items-end my-5">
+
+        {/* Pulsante torna indietro */}
         <div className="col-12 col-md-4 d-flex justify-content-start">
           <Link className="btn btn-cute font-quicksand" to={baseRoute}>
             ← Indietro
           </Link>
         </div>
 
+        {/* Nome e marca del filato */}
         <div className="col-12 col-md-4 text-center">
           <h2 className="mb-1 font-walter fs-1">{heading}</h2>
           {item?.brand ? <div className="font-quicksand fs-4 text-muted">{String(item.brand)}</div> : null}
@@ -263,8 +230,11 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
       {isLoading ? <Loading label="Caricamento…" /> : null}
       {error ? <ErrorState title="Could not load item" error={error} /> : null}
 
+      {/* SECONDA SEZIONE del main: scheda di dettaglio del filato, con progetti associati e colori disponibili */}
       {!isLoading && !error && item ? (
         <div className="row g-4">
+
+          {/* Immagine del filato */}
           <div className="col-12 col-lg-5">
             <div className="polaroid">
               {imageUrl ? (
@@ -283,25 +253,29 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
               <div className="polaroid__caption font-walter">{heading}</div>
             </div>
           </div>
-
+          
+          {/* Scheda di dettaglio e progetti correlati */}
           <div className="col-12 col-lg-7 px-4">
+            
+            {/* Minicalendari con data aggiunto, data aggiornato e numero di tipi di fibre */}
             <div className="d-flex gap-3 flex-wrap mb-4 justify-content-evenly">
               <MiniCalendar label="Aggiunto" date={createdAt} />
               <MiniCalendar label="Aggiornato" date={updatedAt} />
               <MiniStat label="Fibre" value={item?.fiber_types_number ?? fibers.length ?? '—'} />
             </div>
-
+            
+            {/* Dettagli */}
             <div className="card shadow-sm">
               <div className="card-body font-quicksand">
                 <h5 className="font-walter mb-3" style={{color: '#F37046'}}>Dettagli</h5>
 
                 <div className="row g-3">
-                  <div className="col-12 col-md-6">
+                  <div className="col-6">
                     <div className="text-muted small">Marca</div>
                     <div className="fw-semibold">{item?.brand || '—'}</div>
                   </div>
 
-                  <div className="col-12 col-md-6">
+                  <div className="col-6">
                     <div className="text-muted small">Fibre</div>
                     {fibers.length === 0 ? (
                       <div className="fw-semibold">—</div>
@@ -329,38 +303,38 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
                     ) : null}
                   </div>
 
-                  <div className="col-12 col-md-6">
+                  <div className="col-6">
                     <div className="text-muted small">Peso</div>
                     <div className="fw-semibold">{item?.weight || '—'}</div>
                   </div>
 
-                  <div className="col-12 col-md-6">
+                  <div className="col-6">
                     <div className="text-muted small">Categoria</div>
                     <div className="fw-semibold">{item?.category || '—'}</div>
                   </div>
 
-                  <div className="col-12 col-md-6">
+                  <div className="col-6">
                     <div className="text-muted small">Peso unità</div>
                     <div className="fw-semibold">
                       {item?.unit_weight != null ? `${String(item.unit_weight)} g` : '—'}
                     </div>
                   </div>
 
-                  <div className="col-12 col-md-6">
+                  <div className="col-6">
                     <div className="text-muted small">Metri</div>
                     <div className="fw-semibold">
                       {item?.meterage != null ? String(item.meterage) : '—'}
                     </div>
                   </div>
                   
-                  <div className="col-12 col-md-6">
+                  <div className="col-6">
                     <div className="text-muted small">Uncinetto</div>
                     <div className="fw-semibold">
                       {formatMinMax(item?.min_hook_size, item?.max_hook_size)}
                     </div>
                   </div>
 
-                  <div className="col-12 col-md-6">
+                  <div className="col-6">
                     <div className="text-muted small">Ferri</div>
                     <div className="fw-semibold">
                       {formatMinMax(item?.min_needle_size, item?.max_needle_size)}
@@ -369,7 +343,8 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
                 </div>
               </div>
             </div>
-
+            
+            {/* Schede progetti correlati */}
             <div className="mt-4">
               <div className="d-flex align-items-end justify-content-between gap-2">
                 <h5 className="font-walter fs-3 mb-0" style={{color: '#F37046'}}>
@@ -391,7 +366,9 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
             </div>
 
           </div>
-            {yarnColorways.length > 0 ? (
+
+          {/* Lista colori disponibili */}
+          {yarnColorways.length > 0 ? (
               <div className="mt-5">
                 <div className="d-flex align-items-end justify-content-between gap-2">
                   <h5 className="font-walter mb-0" style={{color: '#F37046'}}>
@@ -409,6 +386,7 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
         </div>
       ) : null}
 
+      {/* TERZA SEZIONE del main: pulsante torna indietro */}
       <div className="mt-4 d-flex justify-content-start">
         <Link className="btn btn-cute font-quicksand" to={baseRoute}>
           ← Indietro

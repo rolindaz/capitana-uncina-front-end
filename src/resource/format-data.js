@@ -1,5 +1,12 @@
 import { API_BASE_URL } from "../api/http"
 
+// Una per avere facilmente l'url completa dell'immagine della risorsa
+export function buildMediaUrl(path) {
+  if (!path) return null
+  const base = API_BASE_URL
+  return `${base}/storage/${path}`
+}
+
 // Creo una funzione per formattare la data al formato europeo (dd/mm/yyyy)
 export function formatDate(value) {
   if (!value) return '—'
@@ -24,9 +31,18 @@ export function toNumberOrNull(value) {
   return Number.isNaN(number) ? null : number
 }
 
-// Una per avere facilmente l'url completa dell'immagine della risorsa
-export function buildMediaUrl(path) {
-  if (!path) return null
-  const base = API_BASE_URL
-  return `${base}/storage/${path}`
+export function formatMinMax(minValue, maxValue) {
+  const minPresent = minValue != null && String(minValue).trim() !== ''
+  const maxPresent = maxValue != null && String(maxValue).trim() !== ''
+
+  if (!minPresent && !maxPresent) return '—'
+  if (minPresent && !maxPresent) return String(minValue)
+  if (!minPresent && maxPresent) return String(maxValue)
+
+  const minText = String(minValue)
+  const maxText = String(maxValue)
+  if (minText === maxText) return minText
+  return `${minText} – ${maxText}`
 }
+
+
