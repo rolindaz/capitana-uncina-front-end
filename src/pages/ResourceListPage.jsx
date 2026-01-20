@@ -4,7 +4,7 @@ import ErrorState from '../components/ErrorState'
 import Loading from '../components/Loading'
 import { fetchResourceList } from '../api/resources'
 import { getItemId, getItemLabel } from '../api/http'
-import { API_BASE_URL } from '../api/config'
+import { API_BASE_URL } from '../api/http'
 
 function formatDate(value) {
   if (!value) return '—'

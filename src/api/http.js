@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './config'
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export function buildApiUrl(pathname) {
   const cleanPath = String(pathname || '').startsWith('/')
