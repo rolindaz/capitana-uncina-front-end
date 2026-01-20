@@ -3,7 +3,22 @@ import { Link, useParams } from 'react-router-dom'
 import ErrorState from '../components/ErrorState'
 import Loading from '../components/Loading'
 import { fetchResourceDetail } from '../api/resources'
-import { getItemLabel } from '../api/http'
+
+function getResourceLabel(item) {
+  const translation = item?.translation
+  const label =
+    translation?.name ??
+    translation?.title ??
+    item?.name ??
+    item?.title ??
+    item?.key ??
+    item?.slug
+
+  if (label != null && String(label).trim() !== '') return String(label)
+
+  const id = item?.id
+  return id != null ? `#${id}` : '—'
+}
 
 function ObjectTable({ data }) {
   if (!data || typeof data !== 'object') return null
@@ -64,7 +79,7 @@ export default function ResourceDetailPage({ title, resourcePath, baseRoute }) {
     }
   }, [resourcePath, id])
 
-  const heading = item ? getItemLabel(item) : `${title} #${id}`
+  const heading = item ? getResourceLabel(item) : `${title} #${id}`
 
   return (
     <div className="container py-4">

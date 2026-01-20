@@ -3,7 +3,21 @@ import { Link, useParams } from 'react-router-dom'
 import ErrorState from '../components/ErrorState'
 import Loading from '../components/Loading'
 import { fetchResourceDetail } from '../api/resources'
-import { getItemLabel, API_BASE_URL } from '../api/http'
+import { API_BASE_URL } from '../api/http'
+
+function getProjectLabel(project) {
+  const translation = project?.translation
+  const label =
+    translation?.name ??
+    translation?.title ??
+    project?.name ??
+    project?.title
+
+  if (label != null && String(label).trim() !== '') return String(label)
+
+  const id = project?.id
+  return id != null ? `Progetto #${id}` : 'Progetto'
+}
 
 function formatDateEU(value) {
   if (!value) return '—'
@@ -63,7 +77,7 @@ function MiniStat({ label, value }) {
 function ProjectCard({ project }) {
   const id = project?.id
   const slug = project?.slug ?? project?.translation?.slug
-  const title = getItemLabel(project)
+  const title = getProjectLabel(project)
   const status = project?.translation?.status
   const img = buildMediaUrl(project?.image_path)
 
@@ -192,7 +206,7 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
     }
   }, [resourcePath, slug])
 
-  const heading = item ? (item?.name ? String(item.name) : getItemLabel(item)) : `${title} #${slug}`
+  const heading = item ? (item?.name ? String(item.name) : `${title} #${slug}`) : `${title} #${slug}`
 
   const imageUrl = useMemo(() => buildMediaUrl(item?.image_path), [item])
 

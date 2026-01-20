@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import ErrorState from '../components/ErrorState'
 import Loading from '../components/Loading'
 import { fetchResourceList } from '../api/resources'
-import { getItemId, getItemLabel } from '../api/http'
 import { API_BASE_URL } from '../api/http'
 
 function formatDate(value) {
@@ -20,6 +19,27 @@ function normalizeLabel(value) {
   if (value == null) return null
   const text = String(value).trim()
   return text ? text : null
+}
+
+function getResourceId(item) {
+  const id = item?.id
+  return id == null ? null : id
+}
+
+function getResourceLabel(item) {
+  const translation = item?.translation
+  const label =
+    translation?.name ??
+    translation?.title ??
+    item?.name ??
+    item?.title ??
+    item?.key ??
+    item?.slug
+
+  if (label != null && String(label).trim() !== '') return String(label)
+
+  const id = getResourceId(item)
+  return id != null ? `#${id}` : '—'
 }
 
 function getItemSlug(item) {
@@ -133,7 +153,7 @@ function DropdownFilter({ label, valueLabel, children, isDisabled = false }) {
 }
 
 function ProjectCard({ item, to }) {
-  const title = getItemLabel(item)
+  const title = getResourceLabel(item)
   const status = getProjectStatus(item)
   const category = getProjectCategory(item)
   const createdAt = formatDate(item?.created_at)
@@ -192,7 +212,7 @@ function ProjectCard({ item, to }) {
 }
 
 function YarnCard({ item, to }) {
-  const name = item?.name ? String(item.name) : getItemLabel(item)
+  const name = item?.name ? String(item.name) : getResourceLabel(item)
   const brand = item?.brand ? String(item.brand) : '—'
   const createdAt = formatDate(item?.created_at)
   const updatedAt = formatDate(item?.updated_at)
@@ -346,7 +366,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
 
     if (variant !== 'projects' && variant !== 'yarns') {
       return copy.sort((a, b) =>
-        String(getItemLabel(a)).localeCompare(String(getItemLabel(b)))
+        String(getResourceLabel(a)).localeCompare(String(getResourceLabel(b)))
       )
     }
 
@@ -362,7 +382,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
           return item?.brand ?? ''
         case 'name':
         default:
-          return getItemLabel(item)
+          return getResourceLabel(item)
       }
     }
 
@@ -380,7 +400,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
       }
 
       if (cmp === 0) {
-        cmp = String(getItemLabel(a)).localeCompare(String(getItemLabel(b)))
+        cmp = String(getResourceLabel(a)).localeCompare(String(getResourceLabel(b)))
       }
 
       return direction === 'desc' ? -cmp : cmp
@@ -716,7 +736,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
         variant === 'projects' ? (
           <div className="row g-3">
             {paginatedItems.map((item) => {
-              const id = getItemId(item)
+              const id = getResourceId(item)
               if (id == null) return null
               const slugOrId = getItemSlug(item) ?? id
               return (
@@ -731,7 +751,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
         ) : variant === 'yarns' ? (
           <div className="row g-3">
             {paginatedItems.map((item) => {
-              const id = getItemId(item)
+              const id = getResourceId(item)
               if (id == null) return null
               const slugOrId = getItemSlug(item) ?? id
               return (
@@ -746,8 +766,8 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
         ) : (
           <div className="list-group">
             {sortedItems.map((item, index) => {
-              const id = getItemId(item)
-              const label = getItemLabel(item)
+              const id = getResourceId(item)
+              const label = getResourceLabel(item)
               const secondary =
                 (item && typeof item === 'object' && item.translation && typeof item.translation === 'object'
                   ? item.translation.status

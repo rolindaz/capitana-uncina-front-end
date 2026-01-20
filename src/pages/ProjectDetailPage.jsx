@@ -3,8 +3,21 @@ import { Link, useParams } from 'react-router-dom'
 import ErrorState from '../components/ErrorState'
 import Loading from '../components/Loading'
 import { fetchResourceDetail } from '../api/resources'
-import { getItemLabel } from '../api/http'
 import { API_BASE_URL } from '../api/http'
+
+function getProjectLabel(project) {
+  const translation = project?.translation
+  const label =
+    translation?.name ??
+    translation?.title ??
+    project?.name ??
+    project?.title
+
+  if (label != null && String(label).trim() !== '') return String(label)
+
+  const id = project?.id
+  return id != null ? `Progetto #${id}` : 'Progetto'
+}
 
 function formatDateEU(value) {
   if (!value) return '—'
@@ -252,7 +265,7 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
     }
   }, [resourcePath, slug])
 
-  const heading = item ? getItemLabel(item) : `${title} #${slug}`
+  const heading = item ? getProjectLabel(item) : `${title} #${slug}`
 
   const status = item?.translation?.status ?? '—'
   const notes = item?.translation?.notes
