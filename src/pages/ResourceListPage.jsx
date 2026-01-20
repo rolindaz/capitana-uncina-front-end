@@ -21,88 +21,11 @@ import Loading from '../components/Loading'
 import { fetchResourceList } from '../api/resources'
 import { API_BASE_URL } from '../api/http'
 
-// #endregion
+// Importo risorse utili dal file di approvvigionamento dati
+import { getItemSlug, getResourceId, getResourceLabel, getYarnFiberNames, getProjectCategory, getProjectStatus, getYarnStandardWeight } from '../resource/get-data'
 
-// #region Funzioni di approvvigionamento dati
-
-// Creo una funzione per formattare la data al formato europeo (dd/mm/yyyy)
-function formatDate(value) {
-  if (!value) return '—'
-  const date = value instanceof Date ? value : new Date(value)
-  if (Number.isNaN(date.getTime())) return String(value)
-  const day = String(date.getDate()).padStart(2, '0')
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const year = String(date.getFullYear())
-  return `${day}/${month}/${year}`
-}
-
-// Creo una funzione per ottenere l'id dell'item
-function getResourceId(item) {
-  const id = item?.id
-  return id == null ? null : id
-}
-
-// Una per ottenere la label (nome della risorsa)
-function getResourceLabel(item) {
-  const translation = item?.translation
-  const label = translation?.name ?? item?.name
-
-  if (label != null && String(label).trim() !== '') return String(label)
-
-  const id = getResourceId(item)
-  return id != null ? `#${id}` : '—'
-}
-
-// Una per ottenere lo slug
-function getItemSlug(item) {
-  const direct = item?.slug
-  if (direct) return direct
-
-  const translationSlug = item?.translation?.slug
-  if (translationSlug) return translationSlug
-
-  return null
-}
-
-// Una per ottenere lo stato del progetto
-function getProjectStatus(item) {
-  const status = item?.translation?.status
-  return status ? String(status) : '—'
-}
-
-// Una per ottenere la categoria del progetto
-function getProjectCategory(item) {
-  const cat = item?.category
-  const label = cat?.translation?.name
-  return label ? String(label) : '—'
-}
-
-// Una per avere facilmente l'url completa dell'immagine della risorsa
-function buildMediaUrl(path) {
-  if (!path) return null
-  const base = API_BASE_URL
-  return `${base}/storage/${path}`
-}
-
-// Una per ottenere il peso del filato
-function getYarnStandardWeight(item) {
-  return item?.weight
-}
-
-// Una per ottenere l'array di fibre del filato
-function getYarnFiberNames(item) {
-  const yarnFibers = []
-
-  const fiberYarns = Array.isArray(item?.fiber_yarns) ? item.fiber_yarns : []
-  for (const fy of fiberYarns) {
-    const fiber = fy?.fiber
-    const name = fiber?.translation?.name
-    console.log(name);
-    if (name) yarnFibers.push(name)
-  }
-
-  return Array.from(new Set(yarnFibers))
-}
+// Importo risorse utili dal file di formattazione dati
+import { formatDate, buildMediaUrl } from '../resource/format-data'
 
 // #endregion
 
@@ -125,7 +48,6 @@ function DropdownFilter({ label, valueLabel, children, isDisabled = false }) {
 }
 
 // Funzioni per componenti per la presentazione di dati diversi a seconda del tipo di risorsa (project o yarn)
-
 function ProjectCard({ item, to }) {
   const title = getResourceLabel(item)
   const status = getProjectStatus(item)
