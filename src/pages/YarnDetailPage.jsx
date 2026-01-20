@@ -111,7 +111,6 @@ function ColorwayCard({ colorway }) {
   const id = colorway?.id
   const name =
     colorway?.translation?.name ??
-    colorway?.title ??
     colorway?.key ??
     (id != null ? `Colorway #${id}` : 'Colorway')
 

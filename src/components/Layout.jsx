@@ -65,7 +65,18 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <footer className="border-top py-3">
+      <footer className="site-footer py-3">
+        <div className="container">
+          <div className="d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+            <div className="site-footer__left font-quicksand">
+              Made with <span aria-label="love" title="love">♥</span> by Rolinda
+            </div>
+            <div className="site-footer__right font-quicksand">
+              JavaScript <span className="mx-2">|</span> ReactJS <span className="mx-2">|</span> Vite{' '}
+              <span className="mx-2">|</span> Bootstrap
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
   )

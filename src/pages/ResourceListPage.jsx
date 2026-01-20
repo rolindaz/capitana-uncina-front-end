@@ -238,10 +238,15 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
   const [error, setError] = useState(null)
   const [orderBy, setOrderBy] = useState('name')
 
+  const [page, setPage] = useState(1)
+  const pageSize = 9
+
   const [projectCategoryFilter, setProjectCategoryFilter] = useState(null)
   const [projectStatusFilter, setProjectStatusFilter] = useState(null)
   const [yarnFiberFilter, setYarnFiberFilter] = useState(null)
   const [yarnWeightFilter, setYarnWeightFilter] = useState(null)
+
+  const isPaginated = variant === 'projects' || variant === 'yarns'
 
   const orderLabel = useMemo(() => {
     switch (orderBy) {
@@ -371,6 +376,99 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
       return direction === 'desc' ? -cmp : cmp
     })
   }, [filteredItems, variant, orderBy])
+
+  useEffect(() => {
+    setPage(1)
+  }, [orderBy, projectCategoryFilter, projectStatusFilter, yarnFiberFilter, yarnWeightFilter, variant])
+
+  const totalItems = sortedItems.length
+  const totalPages = useMemo(() => {
+    if (!isPaginated) return 1
+    if (totalItems <= 0) return 1
+    return Math.max(1, Math.ceil(totalItems / pageSize))
+  }, [isPaginated, totalItems])
+
+  const currentPage = Math.min(Math.max(1, page), totalPages)
+
+  useEffect(() => {
+    if (page !== currentPage) setPage(currentPage)
+  }, [page, currentPage])
+
+  const paginatedItems = useMemo(() => {
+    if (!isPaginated) return sortedItems
+
+    const start = (currentPage - 1) * pageSize
+    const end = start + pageSize
+    return sortedItems.slice(start, end)
+  }, [sortedItems, isPaginated, currentPage])
+
+  const paginationPages = useMemo(() => {
+    if (!isPaginated) return []
+    if (totalPages <= 1) return [1]
+
+    const pages = new Set([1, totalPages, currentPage - 1, currentPage, currentPage + 1])
+    const numeric = Array.from(pages)
+      .filter((n) => n >= 1 && n <= totalPages)
+      .sort((a, b) => a - b)
+
+    const out = []
+    let prev = null
+    for (const n of numeric) {
+      if (prev != null && n - prev > 1) out.push('ellipsis')
+      out.push(n)
+      prev = n
+    }
+    return out
+  }, [isPaginated, totalPages, currentPage])
+
+  const paginationControls =
+    !isLoading && !error && isPaginated && sortedItems.length > 0 && totalPages > 1 ? (
+      <nav className="mt-4 mb-4" aria-label="Pagination">
+        <div className="d-flex align-items-center justify-content-between gap-2">
+          <ul className="pagination pagination-cute mb-0">
+            <li className={`page-item ${currentPage <= 1 ? 'disabled' : ''}`}>
+              <button
+                type="button"
+                className="page-link"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                aria-label="Previous"
+              >
+                ‹
+              </button>
+            </li>
+          </ul>
+
+          <ul className="pagination pagination-cute mb-0 justify-content-center flex-wrap">
+            {paginationPages.map((p, idx) =>
+              p === 'ellipsis' ? (
+                <li key={`e-${idx}`} className="page-item disabled" aria-hidden="true">
+                  <span className="page-link">…</span>
+                </li>
+              ) : (
+                <li key={p} className={`page-item ${p === currentPage ? 'active' : ''}`}>
+                  <button type="button" className="page-link" onClick={() => setPage(p)}>
+                    {p}
+                  </button>
+                </li>
+              )
+            )}
+          </ul>
+
+          <ul className="pagination pagination-cute mb-0">
+            <li className={`page-item ${currentPage >= totalPages ? 'disabled' : ''}`}>
+              <button
+                type="button"
+                className="page-link"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                aria-label="Next"
+              >
+                ›
+              </button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    ) : null
 
   useEffect(() => {
     let isMounted = true
@@ -602,10 +700,12 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
         </div>
       ) : null}
 
+      {paginationControls}
+
       {!isLoading && !error && sortedItems.length > 0 ? (
         variant === 'projects' ? (
           <div className="row g-3">
-            {sortedItems.map((item, index) => {
+            {paginatedItems.map((item) => {
               const id = getItemId(item)
               if (id == null) return null
               return <ProjectCard key={id} item={item} to={`${baseRoute}/${id}`} />
@@ -613,7 +713,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
           </div>
         ) : variant === 'yarns' ? (
           <div className="row g-3">
-            {sortedItems.map((item, index) => {
+            {paginatedItems.map((item) => {
               const id = getItemId(item)
               if (id == null) return null
               return <YarnCard key={id} item={item} to={`${baseRoute}/${id}`} />
@@ -656,6 +756,8 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
           </div>
         )
       ) : null}
+
+      {paginationControls}
 
       <div className="mt-4 d-flex justify-content-start">
         <Link className="btn btn-cute font-quicksand" to="/">
