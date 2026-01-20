@@ -56,13 +56,13 @@ export default function HomePage() {
           />
           <HomeCard
             title="TECNICHE"
-            description="Craft types and techniques I enjoy."
+            description="Creare con le fibre tessili è un universo di tecniche e competenze diverse che si completano e arricchiscono a vicenda. La parola d'ordine è SPERIMENTARE: tante volte monto qualcosa che non vedrà mai la luce, solo per vedere cosa succede, e poi lo disfo. Finora mi sono data all'uncinetto, ai ferri e al macramè. Sicuramente il prossimo è l'uncinetto tunisino, e poi chissà!"
             to="/crafts"
             variant="crafts"
           />
           <HomeCard
             title="FIBRE"
-            description="Tags to keep everything organized."
+            description="Le protagoniste di questa passione sono le fibre tessili. Ce ne sono di tutti i tipi, vegetali, animali, artificiali e ognuna ha caratteristiche diverse e dona un carattere specifico alle creazioni per cui si usa. Il mio sogno è allevare i miei alpaca e produrre la mia lana con le tinte che voglio, sarebbe meraviglioso!"
             to="/categories"
             variant="categories"
           />
