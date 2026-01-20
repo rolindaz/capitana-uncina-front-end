@@ -5,73 +5,25 @@ import { Link, useParams } from 'react-router-dom'
 import ErrorState from '../components/ErrorState'
 import Loading from '../components/Loading'
 import { fetchResourceDetail } from '../api/resources'
-import { API_BASE_URL } from '../api/http'
+import { getResourceLabel } from '../resource/get-data'
+import {
+  formatDate,
+  formatHours,
+  formatInteger,
+  toNumberOrNull,
+  buildMediaUrl
+} from '../resource/format-data'
 
 //#endregion
 
 // Funzione per ottenere il nome delle risorse (forse isolare tutte le funzioni per approvvigionamento dati in un file separato?
-function getProjectLabel(project) {
-  const translation = project?.translation
-  const label =
-    translation?.name ??
-    translation?.title ??
-    project?.name ??
-    project?.title
 
-  if (label != null && String(label).trim() !== '') return String(label)
-
-  const id = project?.id
-  return id != null ? `Progetto #${id}` : 'Progetto'
-}
-
-function formatDateEU(value) {
-  if (!value) return '—'
-  const date = value instanceof Date ? value : new Date(value)
-  if (Number.isNaN(date.getTime())) return String(value)
-  const dd = String(date.getDate()).padStart(2, '0')
-  const mm = String(date.getMonth() + 1).padStart(2, '0')
-  const yyyy = String(date.getFullYear())
-  return `${dd}/${mm}/${yyyy}`
-}
-
-function formatHours(value) {
-  if (value == null || value === '') return '—'
-  const number = typeof value === 'number' ? value : Number(value)
-  if (Number.isNaN(number)) return String(value)
-  return `${number} h`
-}
-
-function formatInteger(value) {
-  if (value == null || value === '') return '—'
-  const number = typeof value === 'number' ? value : Number(value)
-  if (Number.isNaN(number)) return String(value)
-  return String(Math.trunc(number))
-}
-
-function toNumberOrNull(value) {
-  if (value == null || value === '') return null
-  const number = typeof value === 'number' ? value : Number(value)
-  return Number.isNaN(number) ? null : number
-}
-
-function buildMediaUrl(path) {
-  if (!path) return null
-  const asString = String(path)
-  if (/^https?:\/\//i.test(asString)) return asString
-
-  const clean = asString.replace(/^\/+/, '')
-  const base = (API_BASE_URL || '').replace(/\/+$/, '')
-
-  if (!base) return `/${clean}`
-  if (clean.startsWith('storage/')) return `${base}/${clean}`
-  return `${base}/storage/${clean}`
-}
 
 function MiniCalendar({ label, date }) {
   return (
     <div className="mini-calendar font-quicksand">
       <div className="mini-calendar__top">{label}</div>
-      <div className="mini-calendar__date">{formatDateEU(date)}</div>
+      <div className="mini-calendar__date">{formatDate(date)}</div>
     </div>
   )
 }
@@ -271,7 +223,7 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
     }
   }, [resourcePath, slug])
 
-  const heading = item ? getProjectLabel(item) : `${title} #${slug}`
+  const heading = item ? getResourceLabel(item) : `${title} #${slug}`
 
   const status = item?.translation?.status ?? '—'
   const notes = item?.translation?.notes
