@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 export default function NotFoundPage() {
   return (
-    <div className="container py-5">
+    <div className="container font-quicksand py-5">
       <div className="alert alert-warning" role="alert">
         <div className="fw-semibold">
           Pagina non trovata
@@ -11,7 +11,7 @@ export default function NotFoundPage() {
           La pagina che stai cercando non esiste!
         </div>
       </div>
-      <Link className="btn btn-outline-dark" to="/">
+      <Link className="fw-semibold btn btn-outline-dark" to="/">
         Vai alla home
       </Link>
     </div>

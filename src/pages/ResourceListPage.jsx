@@ -1,10 +1,31 @@
+// #region Importazioni
+
+// Importo da React
+/*
+
+useEffect: esegue delle operazioni dopo un render come conseguenza di quel render o, volendo, della variazione di una dipendenza che gli viene passata tra le quadre
+
+useMemo: salva in una variabile un valore pesante da ricalcolare per preservarlo ad ogni render. Vuole una dipendenza il cui valore, quando varia, triggera il ricalcolo e quindi l'esecuzione della funzione useMemo (così la lista non viene ricalcolata ogni volta che la pagina viene renderizzata)
+
+useState: salva in una variabile locale di stato un valore e gli associa un metodo per aggiornarlo. La variabile va passata ad un componente funzionale di React che si rirenderizza all'aggiornarsi di quel valore (se il valore non muta, viene conservato al suo stato attuale tra i vari render)
+
+*/
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+
+// Importo i componenti
 import ErrorState from '../components/ErrorState'
 import Loading from '../components/Loading'
+
+// Importo risorse utili dai file di logica api
 import { fetchResourceList } from '../api/resources'
 import { API_BASE_URL } from '../api/http'
 
+// #endregion
+
+// #region Funzioni di approvvigionamento dati
+
+// Creo una funzione per formattare la data al formato europeo (dd/mm/yyyy)
 function formatDate(value) {
   if (!value) return '—'
   const date = value instanceof Date ? value : new Date(value)
@@ -15,26 +36,16 @@ function formatDate(value) {
   return `${day}/${month}/${year}`
 }
 
-function normalizeLabel(value) {
-  if (value == null) return null
-  const text = String(value).trim()
-  return text ? text : null
-}
-
+// Creo una funzione per ottenere l'id dell'item
 function getResourceId(item) {
   const id = item?.id
   return id == null ? null : id
 }
 
+// Una per ottenere la label (nome della risorsa)
 function getResourceLabel(item) {
   const translation = item?.translation
-  const label =
-    translation?.name ??
-    translation?.title ??
-    item?.name ??
-    item?.title ??
-    item?.key ??
-    item?.slug
+  const label = translation?.name ?? item?.name
 
   if (label != null && String(label).trim() !== '') return String(label)
 
@@ -42,99 +53,60 @@ function getResourceLabel(item) {
   return id != null ? `#${id}` : '—'
 }
 
+// Una per ottenere lo slug
 function getItemSlug(item) {
-  const direct = normalizeLabel(item?.slug)
+  const direct = item?.slug
   if (direct) return direct
 
-  const translationSlug = normalizeLabel(item?.translation?.slug)
+  const translationSlug = item?.translation?.slug
   if (translationSlug) return translationSlug
 
   return null
 }
 
+// Una per ottenere lo stato del progetto
 function getProjectStatus(item) {
-  const status = item?.translation?.status ?? item?.status
+  const status = item?.translation?.status
   return status ? String(status) : '—'
 }
 
+// Una per ottenere la categoria del progetto
 function getProjectCategory(item) {
   const cat = item?.category
-  const label = cat?.translation?.name ?? cat?.translation?.title ?? cat?.name ?? cat?.key
+  const label = cat?.translation?.name
   return label ? String(label) : '—'
 }
 
-function buildProjectImageUrl(item) {
-  const raw = item?.image_path ?? item?.image ?? item?.imageUrl ?? null
-  if (!raw) return null
-  const asString = String(raw)
-  if (/^https?:\/\//i.test(asString)) return asString
-
-  const clean = asString.replace(/^\/+/, '')
-  const base = (API_BASE_URL || '').replace(/\/+$/, '')
-
-  // Common Laravel-ish patterns; pick the most likely first.
-  if (clean.startsWith('storage/')) return `${base}/${clean}`
-  return `${base}/storage/${clean}`
-}
-
+// Una per avere facilmente l'url completa dell'immagine della risorsa
 function buildMediaUrl(path) {
   if (!path) return null
-  const asString = String(path)
-  if (/^https?:\/\//i.test(asString)) return asString
-  const clean = asString.replace(/^\/+/, '')
-  const base = (API_BASE_URL || '').replace(/\/+$/, '')
-  if (clean.startsWith('storage/')) return `${base}/${clean}`
-  return `${base}/storage/${clean}`
+  const base = API_BASE_URL
+  return `${base}/storage/${path}`
 }
 
+// Una per ottenere il peso del filato
 function getYarnStandardWeight(item) {
-  return (
-    normalizeLabel(item?.standard_weight) ||
-    normalizeLabel(item?.weight) ||
-    normalizeLabel(item?.translation?.weight) ||
-    normalizeLabel(item?.translation?.standard_weight)
-  )
+  return item?.weight
 }
 
+// Una per ottenere l'array di fibre del filato
 function getYarnFiberNames(item) {
-  const candidates = []
+  const yarnFibers = []
 
   const fiberYarns = Array.isArray(item?.fiber_yarns) ? item.fiber_yarns : []
   for (const fy of fiberYarns) {
     const fiber = fy?.fiber
-    const name =
-      normalizeLabel(fiber?.translation?.name) ||
-      normalizeLabel(fiber?.translation?.title) ||
-      normalizeLabel(fiber?.name) ||
-      normalizeLabel(fiber?.key)
-    if (name) candidates.push(name)
+    const name = fiber?.translation?.name
+    console.log(name);
+    if (name) yarnFibers.push(name)
   }
 
-  const fibersDirect = Array.isArray(item?.fibers) ? item.fibers : []
-  for (const fiber of fibersDirect) {
-    const name =
-      normalizeLabel(fiber?.translation?.name) ||
-      normalizeLabel(fiber?.translation?.title) ||
-      normalizeLabel(fiber?.name) ||
-      normalizeLabel(fiber?.key) ||
-      normalizeLabel(fiber)
-    if (name) candidates.push(name)
-  }
-
-  const fiberTypes = Array.isArray(item?.fiber_types) ? item.fiber_types : []
-  for (const fiber of fiberTypes) {
-    const name =
-      normalizeLabel(fiber?.translation?.name) ||
-      normalizeLabel(fiber?.translation?.title) ||
-      normalizeLabel(fiber?.name) ||
-      normalizeLabel(fiber?.key) ||
-      normalizeLabel(fiber)
-    if (name) candidates.push(name)
-  }
-
-  return Array.from(new Set(candidates))
+  return Array.from(new Set(yarnFibers))
 }
 
+// #endregion
+
+// Funzione per il menù a tendina per la selezione del filtro
 function DropdownFilter({ label, valueLabel, children, isDisabled = false }) {
   return (
     <div className="dropdown">
@@ -152,13 +124,17 @@ function DropdownFilter({ label, valueLabel, children, isDisabled = false }) {
   )
 }
 
+// Funzioni per componenti per la presentazione di dati diversi a seconda del tipo di risorsa (project o yarn)
+
 function ProjectCard({ item, to }) {
   const title = getResourceLabel(item)
   const status = getProjectStatus(item)
   const category = getProjectCategory(item)
   const createdAt = formatDate(item?.created_at)
   const updatedAt = formatDate(item?.updated_at)
-  const img = buildProjectImageUrl(item)
+  const img = buildMediaUrl(item?.image_path)
+
+  console.log(img);
 
   return (
     <div className="col-12 col-md-6 col-lg-4">
@@ -172,7 +148,7 @@ function ProjectCard({ item, to }) {
               style={{ height: 220, objectFit: 'cover', background: '#f3f3f3' }}
               loading="lazy"
               onError={(e) => {
-                // If the backend image URL is not reachable, hide image area.
+                // Se l'immagine non è disponibile, nascondi l'area immagine
                 e.currentTarget.style.display = 'none'
               }}
             />
@@ -190,17 +166,29 @@ function ProjectCard({ item, to }) {
 
             <div className="small text-muted">
               <div>
-                <span className="fw-semibold span-title">Stato:</span> {status}
+                <span className="fw-semibold span-title">
+                  Stato:
+                </span> 
+                {status}
               </div>
               <div>
-                <span className="fw-semibold span-title">Categoria:</span> {category}
+                <span className="fw-semibold span-title">
+                  Categoria:
+                </span> 
+                {category}
               </div>
               <div className="mt-2">
                 <div>
-                  <span className="fw-semibold span-title">Aggiunto:</span> {createdAt}
+                  <span className="fw-semibold span-title">
+                    Aggiunto:
+                  </span> 
+                  {createdAt}
                 </div>
                 <div>
-                  <span className="fw-semibold span-title">Aggiornato:</span> {updatedAt}
+                  <span className="fw-semibold span-title">
+                    Aggiornato:
+                  </span> 
+                  {updatedAt}
                 </div>
               </div>
             </div>
@@ -238,20 +226,29 @@ function YarnCard({ item, to }) {
           )}
 
           <div className="card-body">
-            <div className="card-title fw-semibold mb-2 font-walter" style={{ lineHeight: 1.2 }}>
+            <div className="card-title fw-semibold mb-2 font-walter" style={{ lineHeight: 1.2, color: '#F37046' }}>
               {name}
             </div>
 
             <div className="small text-muted">
               <div>
-                <span className="fw-semibold span-title">Marca:</span> {brand}
+                <span className="fw-semibold span-title">
+                  Marca:
+                </span> 
+                {brand}
               </div>
               <div className="mt-2">
                 <div>
-                  <span className="fw-semibold span-title">Aggiunto:</span> {createdAt}
+                  <span className="fw-semibold span-title">
+                    Aggiunto:
+                  </span> 
+                  {createdAt}
                 </div>
                 <div>
-                  <span className="fw-semibold span-title">Aggiornato:</span> {updatedAt}
+                  <span className="fw-semibold span-title">
+                    Aggiornato:
+                  </span> 
+                  {updatedAt}
                 </div>
               </div>
             </div>
@@ -263,14 +260,18 @@ function YarnCard({ item, to }) {
 }
 
 export default function ResourceListPage({ title, resourcePath, baseRoute, variant = 'default' }) {
+
+  {/* Variabili di stato generali */}
   const [items, setItems] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [orderBy, setOrderBy] = useState('name')
 
+  {/* Variabili di stato per la paginazione */}
   const [page, setPage] = useState(1)
   const pageSize = 9
 
+  {/* Variabili di stato per i filtri */}
   const [projectCategoryFilter, setProjectCategoryFilter] = useState(null)
   const [projectStatusFilter, setProjectStatusFilter] = useState(null)
   const [yarnFiberFilter, setYarnFiberFilter] = useState(null)
@@ -278,6 +279,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
 
   const isPaginated = variant === 'projects' || variant === 'yarns'
 
+  // #region Variabili useMemo per ordinazione e filtri
   const orderLabel = useMemo(() => {
     switch (orderBy) {
       case 'created_at':
@@ -298,7 +300,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
     if (variant !== 'projects') return []
     const unique = new Set()
     for (const item of items) {
-      const label = normalizeLabel(getProjectCategory(item))
+      const label = getProjectCategory(item)
       if (label && label !== '—') unique.add(label)
     }
     return Array.from(unique.values()).sort((a, b) => a.localeCompare(b))
@@ -308,7 +310,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
     if (variant !== 'projects') return []
     const unique = new Set()
     for (const item of items) {
-      const label = normalizeLabel(getProjectStatus(item))
+      const label = getProjectStatus(item)
       if (label && label !== '—') unique.add(label)
     }
     return Array.from(unique.values()).sort((a, b) => a.localeCompare(b))
@@ -319,7 +321,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
     const unique = new Set()
     for (const item of items) {
       for (const name of getYarnFiberNames(item)) {
-        const label = normalizeLabel(name)
+        const label = name
         if (label) unique.add(label)
       }
     }
@@ -407,6 +409,11 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
     })
   }, [filteredItems, variant, orderBy])
 
+  // #endregion
+
+  // #region Variabili e useEffect per la paginazione
+
+  // Torno a pagina 1 ogni volta che cambio l'ordine delle risorse o applico un filtro
   useEffect(() => {
     setPage(1)
   }, [orderBy, projectCategoryFilter, projectStatusFilter, yarnFiberFilter, yarnWeightFilter, variant])
@@ -500,6 +507,9 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
       </nav>
     ) : null
 
+  // #endregion
+
+  // Fetch delle risorse
   useEffect(() => {
     let isMounted = true
 
@@ -524,22 +534,32 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
 
   return (
     <div className="container py-4">
+
+      {/* PRIMA SEZIONE del main: Pulsante torna indietro, Titolo e pulsanti filtro e ordina per */}
       <div className="row g-2 align-items-end mt-4 mb-5">
+
+        {/* Pulsante torna indietro */}
         <div className="col-12 col-md-4 d-flex justify-content-start">
           <Link className="btn btn-cute font-quicksand" to="/">
             ← Indietro
           </Link>
         </div>
 
+        {/* Titolo */}
         <div className="col-12 col-md-4 text-center">
-          <h2 className="mb-1 font-walter fs-1">{title}</h2>
+          <h2 className="mb-1 font-walter fs-1">
+            {title}
+          </h2>
         </div>
 
+        {/* Pulsanti filtro e ordina per */}
         <div className="col-12 col-md-4 d-flex justify-content-md-end justify-content-start">
           {variant === 'projects' || variant === 'yarns' ? (
             <div className="d-flex gap-2 flex-wrap justify-content-md-end justify-content-start">
               {variant === 'projects' ? (
                 <>
+
+                  {/* Filtra progetti per categoria */}
                   <DropdownFilter
                     label="Categoria"
                     valueLabel={projectCategoryFilter ?? 'Tutte'}
@@ -566,7 +586,8 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
                       </li>
                     ))}
                   </DropdownFilter>
-
+                  
+                  {/* Filtra progetti per stato */}
                   <DropdownFilter
                     label="Stato"
                     valueLabel={projectStatusFilter ?? 'Tutti'}
@@ -598,6 +619,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
 
               {variant === 'yarns' ? (
                 <>
+                  {/* Filtra filati per fibra */}
                   <DropdownFilter
                     label="Fibra"
                     valueLabel={yarnFiberFilter ?? 'Tutte'}
@@ -625,6 +647,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
                     ))}
                   </DropdownFilter>
 
+                  {/* Filtra filati per peso standard */}
                   <DropdownFilter
                     label="Peso"
                     valueLabel={yarnWeightFilter ?? 'Tutti'}
@@ -654,6 +677,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
                 </>
               ) : null}
 
+              {/* Pulsante ordina per */}
               <div className="dropdown">
                 <button
                   className="btn btn-cute dropdown-toggle font-quicksand"
@@ -673,6 +697,8 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
                       Nome
                     </button>
                   </li>
+
+                  {/* Ordina per stato se la risorsa è progetti */}
                   {variant === 'projects' ? (
                     <li>
                       <button
@@ -685,6 +711,7 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
                     </li>
                   ) : null}
 
+                  {/* Ordina per marca se la risorsa è filati */}
                   {variant === 'yarns' ? (
                     <li>
                       <button
@@ -696,6 +723,8 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
                       </button>
                     </li>
                   ) : null}
+
+                  {/* Ordina per data di creazione o di aggiornamento */}
                   <li>
                     <button
                       className={`dropdown-item ${orderBy === 'created_at' ? 'active' : ''}`}
@@ -720,30 +749,33 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
           ) : null}
         </div>
       </div>
-
-      {isLoading ? <Loading label={`Loading ${title.toLowerCase()}…`} /> : null}
-      {error ? <ErrorState title={`Could not load ${title}`} error={error} /> : null}
+      
+      {/* Gestione errori di caricamento */}
+      {isLoading ? <Loading label={`Carico ${title.toLowerCase()}…`} /> : null}
+      {error ? <ErrorState title={`Non sono riuscito a caricare ${title}`} error={error} /> : null}
 
       {!isLoading && !error && sortedItems.length === 0 ? (
         <div className="alert alert-secondary" role="alert">
-          No items found.
+          Qui non c'è niente.
         </div>
       ) : null}
 
+      {/* SECONDA SEZIONE del main: controlli di paginazione */}
       {paginationControls}
-
+      
+      {/* TERZA SEZIONE del main: griglia elenco risorse - 1: se progetti; 2: se filati */}
       {!isLoading && !error && sortedItems.length > 0 ? (
         variant === 'projects' ? (
           <div className="row g-3">
             {paginatedItems.map((item) => {
               const id = getResourceId(item)
               if (id == null) return null
-              const slugOrId = getItemSlug(item) ?? id
+              const slug = getItemSlug(item) ?? id
               return (
                 <ProjectCard
                   key={id}
                   item={item}
-                  to={`${baseRoute}/${encodeURIComponent(String(slugOrId))}`}
+                  to={`${baseRoute}/${encodeURIComponent(String(slug))}`}
                 />
               )
             })}
@@ -763,46 +795,13 @@ export default function ResourceListPage({ title, resourcePath, baseRoute, varia
               )
             })}
           </div>
-        ) : (
-          <div className="list-group">
-            {sortedItems.map((item, index) => {
-              const id = getResourceId(item)
-              const label = getResourceLabel(item)
-              const secondary =
-                (item && typeof item === 'object' && item.translation && typeof item.translation === 'object'
-                  ? item.translation.status
-                  : null) ??
-                (item && typeof item === 'object' ? item.status : null)
+        ) : null
+      ): null}
 
-              if (id == null) {
-                return (
-                  <div key={index} className="list-group-item">
-                    <div className="fw-semibold">{label}</div>
-                    <div className="small text-muted">Missing id field</div>
-                  </div>
-                )
-              }
-
-              return (
-                <Link
-                  key={id}
-                  className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                  to={`${baseRoute}/${encodeURIComponent(String(getItemSlug(item) ?? id))}`}
-                >
-                  <span>
-                    <div className="fw-semibold">{label}</div>
-                    {secondary ? <div className="small text-muted">{String(secondary)}</div> : null}
-                  </span>
-                  <span className="badge text-bg-light">#{id}</span>
-                </Link>
-              )
-            })}
-          </div>
-        )
-      ) : null}
-
+      {/* QUARTA SEZIONE del main: controlli di paginazione */}
       {paginationControls}
 
+      {/* QUINTA SEZIONE del main: pulsante torna indietro */}
       <div className="mt-4 d-flex justify-content-start">
         <Link className="btn btn-cute font-quicksand" to="/">
           ← Indietro
