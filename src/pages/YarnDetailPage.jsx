@@ -122,7 +122,7 @@ function ColorwayCard({ colorway }) {
 // Etichetta fibra
 function FiberChip({ fiberYarn, isActive, onClick }) {
   const fiber = fiberYarn?.fiber
-  const name = fiber?.translation?.name ?? fiber?.key ?? 'Fibra'
+  const name = fiber?.name ?? fiber?.translation?.name ?? fiber?.key ?? 'Fibra'
   const pct = fiberYarn?.percentage
 
   return (
@@ -167,6 +167,8 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
     }
   }, [resourcePath, slug])
 
+  console.log(item);
+  
   // Prendo i dati che mi servono del filato (nome, immagine, creato, aggiornato, fibre, progetti correlati, colori disponibili)
   const heading = item ? (item?.name ? String(item.name) : `${title} #${slug}`) : `${title} #${slug}`
 
@@ -270,11 +272,14 @@ export default function YarnDetailPage({ title, resourcePath, baseRoute }) {
                 <h5 className="font-walter mb-3" style={{color: '#F37046'}}>Dettagli</h5>
 
                 <div className="row g-3">
+
+                  {/* Marca */}
                   <div className="col-6">
                     <div className="text-muted small">Marca</div>
                     <div className="fw-semibold">{item?.brand || '—'}</div>
                   </div>
 
+                  {/* Fibre */}
                   <div className="col-6">
                     <div className="text-muted small">Fibre</div>
                     {fibers.length === 0 ? (

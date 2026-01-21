@@ -47,7 +47,7 @@ function DropdownFilter({ label, valueLabel, children, isDisabled = false }) {
   )
 }
 
-// Funzioni per componenti per la presentazione di dati diversi a seconda del tipo di risorsa (project o yarn)
+// Card del progetto
 function ProjectCard({ item, to }) {
   const title = getResourceLabel(item)
   const status = getProjectStatus(item)
@@ -56,7 +56,7 @@ function ProjectCard({ item, to }) {
   const updatedAt = formatDate(item?.updated_at)
   const img = buildMediaUrl(item?.image_path)
 
-  console.log(img);
+  console.log(item);
 
   return (
     <div className="col-12 col-md-6 col-lg-4">
@@ -89,26 +89,26 @@ function ProjectCard({ item, to }) {
             <div className="small text-muted">
               <div>
                 <span className="fw-semibold span-title">
-                  Stato:
+                  Stato: {' '}
                 </span> 
                 {status}
               </div>
               <div>
                 <span className="fw-semibold span-title">
-                  Categoria:
+                  Categoria: {' '}
                 </span> 
                 {category}
               </div>
               <div className="mt-2">
                 <div>
                   <span className="fw-semibold span-title">
-                    Aggiunto:
+                    Aggiunto: {' '}
                   </span> 
                   {createdAt}
                 </div>
                 <div>
                   <span className="fw-semibold span-title">
-                    Aggiornato:
+                    Aggiornato: {' '}
                   </span> 
                   {updatedAt}
                 </div>
@@ -121,6 +121,7 @@ function ProjectCard({ item, to }) {
   )
 }
 
+// Card del filato
 function YarnCard({ item, to }) {
   const name = item?.name ? String(item.name) : getResourceLabel(item)
   const brand = item?.brand ? String(item.brand) : '—'
@@ -155,20 +156,20 @@ function YarnCard({ item, to }) {
             <div className="small text-muted">
               <div>
                 <span className="fw-semibold span-title">
-                  Marca:
+                  Marca: {' '}
                 </span> 
                 {brand}
               </div>
               <div className="mt-2">
                 <div>
                   <span className="fw-semibold span-title">
-                    Aggiunto:
+                    Aggiunto: {' '}
                   </span> 
                   {createdAt}
                 </div>
                 <div>
                   <span className="fw-semibold span-title">
-                    Aggiornato:
+                    Aggiornato: {' '}
                   </span> 
                   {updatedAt}
                 </div>

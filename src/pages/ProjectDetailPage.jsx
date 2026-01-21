@@ -243,14 +243,14 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
   const status = item?.status ?? item?.translation?.status ?? '—'
   const notes = item?.notes ?? item?.translation?.notes
   const destinationUse = item?.destination_use ?? item?.translation?.destination_use
-  const categoryName = item?.category?.translation?.name ?? item?.category?.key
+  const categoryName = item?.category?.name ?? item?.category?.translation?.name ?? item?.category?.key
   const crafts = item?.crafts
 
   // Estraggo e salvo i nomi delle tecniche come useMemo
   const craftNames = useMemo(() => {
     if (!Array.isArray(crafts)) return []
     return crafts
-      .map((craft) => craft?.translation?.name ?? craft?.key)
+      .map((craft) => craft?.name ?? craft?.translation?.name ?? craft?.key)
       .filter(Boolean)
   }, [crafts])
   
@@ -346,7 +346,9 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
             {/* Dettagli */}
             <div className="card shadow-sm">
               <div className="card-body font-quicksand">
-                <h5 className="font-walter mb-3" style={{color: '#F37046'}}>Dettagli</h5>
+                <h5 className="font-walter mb-3" style={{color: '#F37046'}}>
+                  Dettagli
+                </h5>
 
                 <div className="row g-3">
                   <div className="col-12 col-md-6">

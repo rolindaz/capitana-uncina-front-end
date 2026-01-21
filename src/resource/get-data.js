@@ -40,9 +40,8 @@ export function getProjectStatus(item) {
 
 // Una per ottenere la categoria del progetto
 export function getProjectCategory(item) {
-  const cat = item?.category
-  const label = cat?.translation?.name
-  return label ? String(label) : '—'
+  const cat = item?.category?.name ?? item?.translation?.category?.name
+  return cat ? String(cat) : '—'
 }
 
 //#endregion
