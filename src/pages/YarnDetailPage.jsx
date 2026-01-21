@@ -33,9 +33,9 @@ function ProjectCard({ project }) {
 
   // Prendo i dati che mi servono del progetto (id, slug, nome, status, immagine)
   const id = project?.id
-  const slug = project?.translation?.slug
+  const slug = project?.slug ?? project?.translation?.slug
   const title = getResourceLabel(project)
-  const status = project?.translation?.status
+  const status = project?.status ?? project?.translation?.status
   const img = buildMediaUrl(project?.image_path)
 
   if (id == null) return null

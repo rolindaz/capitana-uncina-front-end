@@ -34,7 +34,7 @@ export function getItemSlug(item) {
 
 // Una per ottenere lo stato del progetto
 export function getProjectStatus(item) {
-  const status = item?.translation?.status
+  const status = item?.status ?? item?.translation?.status
   return status ? String(status) : '—'
 }
 

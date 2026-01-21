@@ -240,9 +240,9 @@ export default function ProjectDetailPage({ title, resourcePath, baseRoute }) {
   const heading = item ? getResourceLabel(item) : `${title} #${slug}`
 
   // Prendo i dettagli del progetto che voglio mostrare (stato, note, per chi è, categoria, tecniche, data di inizio, data di fine, ore totali, nome e link dello schema, nome del designer, taglia, percorso dell'immagine, lista di filati usati (project_yarns))
-  const status = item?.translation?.status ?? '—'
-  const notes = item?.translation?.notes
-  const destinationUse = item?.translation?.destination_use
+  const status = item?.status ?? item?.translation?.status ?? '—'
+  const notes = item?.notes ?? item?.translation?.notes
+  const destinationUse = item?.destination_use ?? item?.translation?.destination_use
   const categoryName = item?.category?.translation?.name ?? item?.category?.key
   const crafts = item?.crafts
 
