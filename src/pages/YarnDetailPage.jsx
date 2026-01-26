@@ -8,6 +8,7 @@ import { fetchResourceDetail } from '../api/resources'
 import { getResourceLabel } from '../resource/get-data'
 import { formatMinMax, formatDate, buildMediaUrl } from '../resource/format-data'
 
+
 //#endregion
 
 function MiniCalendar({ label, date }) {
@@ -84,6 +85,7 @@ function ColorwayCard({ colorway }) {
   // Prendo i dati che mi servono del colore (id, nome (per ora key), codice e immagine)
   const id = colorway?.id
   const name =
+    colorway?.name ??
     colorway?.translation?.name ??
     colorway?.key ??
     (id != null ? `Colore #${id}` : 'Colore')
