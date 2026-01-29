@@ -145,6 +145,7 @@ function YarnUsedCard({ list }) {
                       const colorway = entry?.colorway
                       const colorwayId = colorway?.id ?? entry?.colorway_id
                       const colorwayName =
+                        colorway?.name ??
                         colorway?.translation?.name ??
                         colorway?.key ??
                         (entry?.colorway_id != null ? `Colorway #${entry?.colorway_id}` : '—')
